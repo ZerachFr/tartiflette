@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tartiflette</title>
+<meta name="theme-color" content="#F1F2F4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F1115" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Tartiflette">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Literata:opsz,wght@7..72,400;7..72,600;7..72,700&display=swap">
+<style>
+:root {
+  --paper: #F1F2F4;
+  --surface: #FFFFFF;
+  --ink: #15171C;
+  --muted: #5A606E;
+  --line: #D9DCE2;
+  --soft: #E8EAEE;
+  --l1: #3348A6;
+  --l2: #BE3A22;
+  --l3: #9C7410;
+  --ok: #2E7D4F;
+  --bad: #B4322A;
+  --accent: #3E4BB8;
+  --scale: 1;
+  --f-text: "Literata", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --f-ui: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color-scheme: light;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --paper: #0F1115; --surface: #171A20; --ink: #E7E8EB; --muted: #9AA1AE; --line: #2A2F38; --soft: #20242C;
+    --l1: #93A5FF; --l2: #FF8466; --l3: #E3B84A; --ok: #6CCB94; --bad: #FF7B70;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0F1115; --surface: #171A20; --ink: #E7E8EB; --muted: #9AA1AE; --line: #2A2F38; --soft: #20242C;
+  --l1: #93A5FF; --l2: #FF8466; --l3: #E3B84A; --ok: #6CCB94; --bad: #FF7B70;
+  color-scheme: dark;
+}
+html { font-size: calc(16px * var(--scale)); scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 120px); -webkit-text-size-adjust: 100%; }
+*, *::before, *::after { box-sizing: inherit; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--f-ui); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--paper); }
+button, input, textarea, select { font: inherit; color: inherit; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.lv1 { --lv: var(--l1); } .lv2 { --lv: var(--l2); } .lv3 { --lv: var(--l3); }
+
+/* En-tête */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--paper); border-bottom: 1px solid var(--line); }
+.top-in { max-width: 760px; margin: 0 auto; display: flex; align-items: center; gap: 6px; padding: 8px 14px; min-height: 56px; }
+.top .title { flex: 1; min-width: 0; font-weight: 700; font-size: 1.02rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.brand { font-family: var(--f-text); font-weight: 700; font-size: 1.3rem; letter-spacing: .01em; }
+.icon-btn { background: none; border: 0; min-width: 44px; min-height: 44px; display: grid; place-items: center; border-radius: 50%; cursor: pointer; color: var(--ink); }
+.icon-btn svg { width: 24px; height: 24px; }
+.who { font-size: .82rem; color: var(--muted); border: 1.5px solid var(--line); border-radius: 999px; padding: 4px 10px; background: var(--surface); cursor: pointer; white-space: nowrap; }
+
+main { max-width: 760px; margin: 0 auto; padding: 18px 18px calc(110px + env(safe-area-inset-bottom, 0px)); }
+.nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: var(--surface); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 0px); }
+.nav-in { max-width: 760px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); }
+.nav button { background: none; border: 0; padding: 9px 4px 8px; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: .74rem; color: var(--muted); cursor: pointer; position: relative; }
+.nav button svg { width: 24px; height: 24px; }
+.nav button[aria-current="page"] { color: var(--ink); font-weight: 700; }
+.nav .count { position: absolute; top: 4px; left: calc(50% + 8px); background: var(--l2); color: #fff; border-radius: 999px; font-size: .68rem; padding: 0 6px; line-height: 1.5; font-weight: 700; }
+
+/* Typo */
+h1, h2, h3 { font-family: var(--f-text); line-height: 1.2; }
+h1 { font-size: 2.1rem; margin: 6px 0 8px; font-weight: 700; letter-spacing: -.01em; }
+h2 { font-size: 1.45rem; margin: 30px 0 10px; font-weight: 700; }
+h3 { font-size: 1.15rem; margin: 22px 0 8px; font-weight: 700; }
+p { margin: 0 0 12px; }
+.muted { color: var(--muted); }
+.small { font-size: .86rem; }
+.lead { font-family: var(--f-text); font-size: 1.12rem; line-height: 1.6; max-width: 62ch; }
+
+/* Texte de lecture */
+.reading { font-family: var(--f-text); font-size: 1.08rem; line-height: 1.75; max-width: 64ch; }
+.reading p { margin: 0 0 1.05em; }
+.reading h3 { font-size: 1.22rem; margin: 1.6em 0 .5em; }
+.reading ul { padding-left: 1.2em; margin: 0 0 1.05em; }
+.reading li { margin-bottom: .4em; }
+.reading .callout { border-left: 4px solid var(--lv, var(--accent)); background: var(--surface); padding: 12px 16px; border-radius: 0 10px 10px 0; margin: 1.2em 0; font-size: 1.02rem; }
+.reading strong { font-weight: 700; }
+.wl { background: none; border: 0; padding: 0; font: inherit; color: var(--accent); text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; cursor: pointer; }
+.wl.missing { color: var(--muted); text-decoration-style: dotted; cursor: help; }
+.gl { background: none; border: 0; padding: 0; font: inherit; color: inherit; border-bottom: 2px dotted var(--muted); cursor: pointer; }
+
+/* Cartes */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin-bottom: 12px; }
+.row { display: flex; gap: 10px; align-items: center; }
+.wrap { flex-wrap: wrap; }
+.spread { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.btn { white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--surface); padding: 9px 16px; min-height: 44px; cursor: pointer; font-size: .95rem; text-decoration: none; }
+.btn:hover { border-color: var(--muted); }
+.btn.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); font-weight: 700; }
+.btn.lv { background: var(--lv); color: var(--surface); border-color: var(--lv); font-weight: 700; }
+.btn.small { min-height: 36px; padding: 5px 12px; font-size: .85rem; }
+.btn.danger { color: var(--bad); border-color: var(--bad); }
+.btn[disabled] { opacity: .45; cursor: default; }
+.btn svg { width: 18px; height: 18px; }
+
+/* Accueil */
+.hero { padding: 10px 0 8px; }
+.hero h1 { font-size: 2.5rem; }
+.logo-old { display: inline-flex; flex-direction: column; gap: 4px; vertical-align: middle; margin-right: 12px; }
+.logo i { display: block; height: 7px; width: 32px; border-radius: 4px; }
+.logo i:nth-child(1) { background: var(--l3); } .logo i:nth-child(2) { background: var(--l2); } .logo i:nth-child(3) { background: var(--l1); }
+.deco { font-size: .7em; margin-left: 10px; vertical-align: middle; }
+.review-card { display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; }
+.review-card .big { font-family: var(--f-text); font-size: 2.4rem; font-weight: 700; line-height: 1; color: var(--l2); min-width: 1.4em; text-align: center; }
+.pack-card { display: block; width: 100%; text-align: left; cursor: pointer; border-top: 6px solid var(--accent); padding: 18px; }
+.pack-card h2 { margin: 0 0 4px; font-size: 1.6rem; color: var(--accent); }
+.pack-card .q { font-family: var(--f-text); font-style: italic; font-size: 1.05rem; margin: 10px 0 14px; }
+.meter { display: grid; grid-template-columns: auto 1fr auto; gap: 6px 10px; align-items: center; font-size: .82rem; }
+.meter .bar { height: 7px; border-radius: 4px; background: var(--soft); overflow: hidden; }
+.meter .bar i { display: block; height: 100%; background: var(--lv); }
+
+/* Onglets du sujet */
+.tabs { display: flex; gap: 2px; overflow-x: auto; margin: 0 -18px 18px; padding: 0 18px; border-bottom: 1px solid var(--line); scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { flex: 0 0 auto; background: none; border: 0; padding: 12px 12px; cursor: pointer; color: var(--muted); border-bottom: 3px solid transparent; margin-bottom: -1px; font-size: .98rem; min-height: 46px; }
+.tab[aria-selected="true"] { color: var(--ink); border-color: var(--accent); font-weight: 700; }
+.pack-head .kd { display: inline-block; font-size: .8rem; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; margin-bottom: 8px; }
+.pack-head h1 { color: var(--accent); }
+
+/* Parcours */
+.path { list-style: none; margin: 0; padding: 0; counter-reset: n; }
+.path li { counter-increment: n; }
+.path button.item { width: 100%; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; display: grid; grid-template-columns: 52px 1fr auto; gap: 12px; align-items: center; cursor: pointer; }
+.path .num { font-family: var(--f-text); font-weight: 700; color: var(--muted); font-size: .9rem; }
+.path h3 { margin: 0; font-size: 1.05rem; }
+.path .sum { font-size: .86rem; color: var(--muted); margin-top: 2px; }
+.minis { display: flex; flex-direction: column-reverse; gap: 3px; }
+.minis i { display: block; width: 22px; height: 5px; border-radius: 3px; background: var(--soft); }
+.minis i.on1 { background: var(--l1); } .minis i.on2 { background: var(--l2); } .minis i.on3 { background: var(--l3); }
+.minis.wide i { width: 34px; height: 6px; }
+
+/* Fiche notion */
+.notion-head { display: grid; grid-template-columns: 1fr 84px; gap: 14px; align-items: start; }
+.notion-head .crumb { font-size: .85rem; color: var(--muted); }
+.notion-head h1 { font-size: 1.9rem; }
+.levelbar { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 57px); z-index: 10; background: var(--paper); margin: 8px -18px 0; padding: 10px 18px; border-bottom: 1px solid var(--line); }
+.levelbar-in { display: grid; grid-template-columns: 48px 1fr 48px; gap: 10px; align-items: center; }
+.step { width: 48px; height: 48px; border-radius: 50%; border: 1.5px solid var(--line); background: var(--surface); font-size: 1.5rem; line-height: 1; cursor: pointer; display: grid; place-items: center; color: var(--ink); }
+.step[disabled] { opacity: .35; cursor: default; }
+.strata { display: flex; align-items: center; gap: 12px; justify-content: center; }
+.strata .bars { display: flex; flex-direction: column-reverse; gap: 4px; }
+.strata .bars i { display: block; width: 46px; height: 8px; border-radius: 4px; background: var(--soft); transition: background-color .2s; }
+.strata .bars i.f1 { background: var(--l1); } .strata .bars i.f2 { background: var(--l2); } .strata .bars i.f3 { background: var(--l3); }
+.strata .lab { font-weight: 700; font-size: 1.02rem; min-width: 8.5em; }
+.strata .lab small { display: block; font-weight: 400; color: var(--muted); font-size: .8rem; }
+.adds { font-size: .88rem; color: var(--muted); margin: 14px 0 4px; }
+.adds b { color: var(--lv); }
+.pending { border: 1.5px dashed var(--line); border-radius: 14px; padding: 22px; text-align: center; color: var(--muted); margin: 18px 0; }
+.test-cta { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 26px 0 8px; padding: 16px; border-radius: 14px; background: var(--surface); border: 1.5px solid var(--lv); }
+.section-list { list-style: none; padding: 0; margin: 0; }
+.section-list li { padding: 10px 0; border-bottom: 1px solid var(--line); }
+.section-list li:last-child { border-bottom: 0; }
+.myth { text-decoration: line-through; text-decoration-color: var(--bad); color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border: 1.5px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 12px; min-height: 38px; cursor: pointer; font-size: .88rem; display: inline-flex; align-items: center; gap: 6px; }
+.chip .y { font-weight: 700; color: var(--accent); }
+.res { display: grid; grid-template-columns: 34px 1fr; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.res:last-child { border-bottom: 0; }
+.res .ic { width: 34px; height: 34px; border-radius: 8px; background: var(--soft); display: grid; place-items: center; }
+.res .ic svg { width: 18px; height: 18px; }
+.res a.t, .res span.t { font-weight: 700; text-decoration: none; }
+.res a.t:hover { text-decoration: underline; }
+.tag { display: inline-block; font-size: .7rem; font-weight: 700; padding: 1px 7px; border-radius: 4px; border: 1.5px solid currentColor; margin-left: 6px; vertical-align: 1px; }
+.tag.en { color: var(--l2); }
+.tag.lvl { color: var(--muted); border-width: 1px; font-weight: 400; }
+textarea { width: 100%; min-height: 120px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--surface); padding: 12px; line-height: 1.55; resize: vertical; font-family: var(--f-text); font-size: 1rem; }
+input[type="text"], input[type="search"] { width: 100%; border: 1.5px solid var(--line); border-radius: 10px; background: var(--surface); padding: 10px 12px; min-height: 44px; }
+.pn { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 26px; }
+.pn button { text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px; cursor: pointer; min-height: 60px; }
+.pn button.next { text-align: right; }
+.pn small { display: block; color: var(--muted); font-size: .78rem; }
+
+/* Tampons */
+.stamp { width: 100%; height: 100%; display: block; }
+.stamp-slot { width: 84px; height: 84px; }
+.stamp.pressed { animation: press .5s cubic-bezier(.2,.9,.3,1.25); }
+@keyframes press { 0% { transform: scale(1.7) rotate(-16deg); opacity: 0; } 55% { opacity: 1; } 100% { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .stamp.pressed { animation: none; } .strata .bars i { transition: none; } }
+
+/* Quiz */
+.quiz-prog { display: flex; gap: 6px; margin: 4px 0 18px; }
+.quiz-prog i { flex: 1; height: 6px; border-radius: 3px; background: var(--soft); }
+.quiz-prog i.ok { background: var(--ok); } .quiz-prog i.ko { background: var(--bad); } .quiz-prog i.cur { background: var(--lv); }
+.qtext { font-family: var(--f-text); font-size: 1.3rem; line-height: 1.4; margin: 0 0 18px; font-weight: 600; }
+.opts { display: flex; flex-direction: column; gap: 10px; }
+.opt { text-align: left; border: 1.5px solid var(--line); background: var(--surface); border-radius: 12px; padding: 14px 16px; cursor: pointer; font-size: 1rem; min-height: 54px; }
+.opt:hover:not([disabled]) { border-color: var(--muted); }
+.opt.good { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, var(--surface)); }
+.opt.wrong { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 12%, var(--surface)); }
+.opt[disabled] { cursor: default; }
+.explain { margin-top: 16px; padding: 14px 16px; border-radius: 12px; background: var(--surface); border-left: 4px solid var(--ok); }
+.explain.ko { border-left-color: var(--bad); }
+.result { text-align: center; padding: 20px 0; }
+.result .stamp-slot { width: 150px; height: 150px; margin: 0 auto 10px; }
+.result .score { font-family: var(--f-text); font-size: 2.8rem; font-weight: 700; line-height: 1; }
+.review-src { font-size: .82rem; color: var(--muted); margin-bottom: 6px; }
+
+/* Enquête */
+.inq-hero { font-family: var(--f-text); font-size: 1.55rem; line-height: 1.3; font-style: italic; margin: 6px 0 18px; padding-left: 16px; border-left: 4px solid var(--accent); }
+.clue { position: relative; }
+.clue .n { font-family: var(--f-text); font-weight: 700; color: var(--accent); font-size: .9rem; }
+.clue h3 { margin: 2px 0 6px; }
+.clue .found { margin-top: 12px; padding: 12px 14px; border-radius: 10px; background: color-mix(in srgb, var(--accent) 9%, var(--surface)); font-family: var(--f-text); }
+.clue .locked { margin-top: 12px; padding: 10px 14px; border-radius: 10px; border: 1.5px dashed var(--line); color: var(--muted); font-size: .88rem; }
+.nlinks { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+
+/* Frise */
+.tl { position: relative; padding-left: 26px; }
+.tl::before { content: ""; position: absolute; left: 8px; top: 6px; bottom: 6px; width: 2px; background: var(--line); }
+.tl .ev { position: relative; padding: 0 0 22px; }
+.tl .ev::before { content: ""; position: absolute; left: -23px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--surface); border: 2.5px solid var(--accent); }
+.tl .ev.hl::before { background: var(--accent); }
+.tl .ev.hl .box { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 35%, transparent); }
+.tl .y { font-family: var(--f-text); font-weight: 700; color: var(--accent); font-size: 1.05rem; }
+.tl .box { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-top: 4px; }
+.tl h3 { margin: 0 0 4px; font-size: 1.05rem; }
+
+/* Glossaire */
+.gloss dt { font-weight: 700; margin-top: 14px; font-family: var(--f-text); font-size: 1.05rem; }
+.gloss dd { margin: 2px 0 0; color: var(--ink); }
+.gloss dd .used { font-size: .82rem; color: var(--muted); margin-top: 4px; }
+
+/* Figures interactives */
+.figure { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin: 1.4em 0; font-family: var(--f-ui); font-size: .92rem; line-height: 1.45; }
+.figure .ft { font-weight: 700; margin-bottom: 8px; }
+.figure svg { width: 100%; height: auto; display: block; }
+.figure input[type="range"] { width: 100%; accent-color: var(--accent); }
+.figure .out { font-variant-numeric: tabular-nums; }
+.figure .chips { margin: 8px 0; }
+.figure .chip[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+/* Feuille modale */
+.sheet { position: fixed; inset: 0; z-index: 45; background: rgba(8, 10, 14, .5); display: flex; align-items: flex-end; justify-content: center; }
+.sheet-in { background: var(--surface); width: 100%; max-width: 760px; max-height: 85vh; overflow-y: auto; border-radius: 18px 18px 0 0; padding: 20px 20px calc(env(safe-area-inset-bottom, 0px) + 20px); }
+.sheet-in h3 { margin-top: 0; }
+.toast { position: fixed; left: 50%; bottom: calc(84px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--paper); padding: 10px 16px; border-radius: 999px; font-size: .9rem; z-index: 60; max-width: 90vw; text-align: center; }
+.empty { text-align: center; padding: 30px 12px; color: var(--muted); }
+.profile-row { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.profile-row input[type="radio"] { width: 22px; height: 22px; accent-color: var(--accent); }
+
+/* Accueil replié */
+.pack-row { cursor: pointer; border-left: 5px solid var(--accent); padding: 12px 12px 12px 14px; }
+.pack-row:hover { border-color: var(--line); border-left-color: var(--accent); box-shadow: 0 1px 0 var(--line); }
+.pr-main { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; }
+.pr-main .emoji { font-size: 1.9rem; line-height: 1; width: 44px; text-align: center; }
+.pr-t h3 { margin: 0; font-size: 1.12rem; color: var(--accent); }
+.peek { color: var(--muted); }
+.peek[aria-expanded="true"] { color: var(--ink); background: var(--soft); }
+.pr-more { margin: 12px 0 2px 56px; }
+.pr-more .q { font-family: var(--f-text); font-style: italic; margin: 6px 0 12px; }
+/* Liens entre domaines */
+.xtag { display: inline-block; font-family: var(--f-ui); font-size: .72rem; font-weight: 700; padding: 0 6px; margin-left: 5px; border-radius: 4px; background: var(--soft); color: var(--ink); text-decoration: none; vertical-align: 1px; white-space: nowrap; }
+/* À développer */
+.flag { border: 1.5px dashed var(--line); background: transparent; color: var(--muted); border-radius: 999px; padding: 4px 12px; min-height: 34px; font-size: .82rem; cursor: pointer; }
+.flag:hover { color: var(--ink); border-color: var(--muted); }
+.flag[aria-pressed="true"] { border-style: solid; border-color: var(--l2); color: var(--l2); font-weight: 700; }
+.req .tag { margin-left: 0; }
+.field { display: block; margin-bottom: 12px; }
+.field > span { display: block; font-size: .85rem; font-weight: 700; margin-bottom: 4px; }
+select { width: 100%; border: 1.5px solid var(--line); border-radius: 10px; background: var(--surface); padding: 10px 12px; min-height: 44px; }
+/* Figures */
+.person h3 { font-size: 1.12rem; }
+.tag.lesson { color: var(--l3); }
+/* Réglages */
+.settings-links { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.link-card { display: flex; gap: 12px; align-items: center; text-align: left; cursor: pointer; margin: 0; }
+.link-card .emoji { font-size: 1.5rem; width: 40px; height: 40px; border-radius: 10px; background: var(--soft); display: grid; place-items: center; flex: 0 0 auto; }
+.link-card strong { display: block; }
+.themes { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.theme-chip { display: flex; gap: 10px; align-items: center; text-align: left; border: 1.5px solid; border-radius: 12px; padding: 10px 12px; cursor: pointer; min-height: 64px; font-family: var(--f-ui); transition: transform .12s; }
+.theme-chip:hover { transform: translateY(-1px); }
+.theme-chip .tc-emoji { flex: 0 0 auto; width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid; display: grid; place-items: center; font-size: 1.15rem; }
+.theme-chip .tc-name { display: block; font-weight: 700; font-size: .95rem; }
+.theme-chip small { display: block; font-size: .76rem; line-height: 1.3; margin-top: 2px; }
+.theme-chip small b { font-weight: 700; }
+@media (prefers-reduced-motion: reduce) { .theme-chip { transition: none; } .theme-chip:hover { transform: none; } }
+.nav .count.soft { background: var(--muted); }
+@media (max-width: 420px) { .settings-links { grid-template-columns: 1fr; } }
+
+
+/* Logo illustré */
+.hero { display: grid; grid-template-columns: 96px 1fr; gap: 14px; align-items: center; padding: 6px 0 10px; }
+.hero h1 { margin: 0 0 4px; }
+.hero .lead { margin: 0; }
+.logo-svg { width: 96px; height: auto; display: block; overflow: visible; }
+.logo-svg .steam path { animation: steam 3.2s ease-in-out infinite; transform-box: fill-box; transform-origin: bottom; }
+.logo-svg .steam path:nth-child(2) { animation-delay: .6s; } .logo-svg .steam path:nth-child(3) { animation-delay: 1.2s; }
+@keyframes steam { 0%, 100% { opacity: .15; transform: translateY(4px) scaleY(.8); } 50% { opacity: .8; transform: translateY(-3px) scaleY(1.05); } }
+@media (prefers-reduced-motion: reduce) { .logo-svg .steam path { animation: none; } }
+@media (max-width: 400px) { .hero { grid-template-columns: 72px 1fr; } .logo-svg { width: 72px; } .hero h1 { font-size: 2rem; } }
+
+/* Bulles des sujets */
+.bubbles { display: grid; grid-template-columns: repeat(auto-fill, minmax(86px, 1fr)); gap: 14px 8px; }
+.bubble { background: none; border: 0; padding: 4px 0; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--ink); border-radius: 14px; }
+.bubble:hover .b-ring { transform: scale(1.05); }
+.b-ring { position: relative; width: 76px; height: 76px; border-radius: 50%; background: var(--surface); box-shadow: 0 0 0 1px var(--line); transition: transform .15s; display: grid; place-items: center; }
+.b-ring .ring { position: absolute; inset: 0; width: 100%; height: 100%; }
+.b-emoji { font-size: 1.9rem; line-height: 1; position: relative; }
+.b-name { font-size: .82rem; font-weight: 700; text-align: center; line-height: 1.2; max-width: 92px; }
+.bubble.soon .b-ring { background: transparent; box-shadow: none; border: 2px dashed var(--line); }
+.bubble.soon .b-emoji { opacity: .55; filter: grayscale(.4); }
+.bubble.soon .b-name { color: var(--muted); font-weight: 400; }
+.b-soon { font-size: .68rem; color: var(--muted); margin-top: -4px; }
+.peek[aria-pressed="true"] { background: var(--soft); color: var(--ink); }
+.pack-row .pr-more { margin-left: 56px; }
+.check-row { display: flex; gap: 10px; align-items: center; padding: 6px 0; font-size: .92rem; }
+.check-row input { width: 20px; height: 20px; accent-color: var(--accent); }
+.note-prev { font-family: var(--f-text); font-style: italic; margin-top: 2px; }
+.swatch-old { display: inline-flex; flex-direction: column; justify-content: center; gap: 2px; width: 26px; height: 26px; border-radius: 7px; border: 1.5px solid; padding: 3px; flex: 0 0 auto; }
+.swatch i { display: block; height: 3px; border-radius: 2px; }
+.theme-chip .swatch + .emoji { font-size: 1.1rem; }
+
+/* Écrans étroits (écran externe des pliables) */
+main { padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: max(18px, env(safe-area-inset-right, 0px)); }
+@media (max-width: 380px) {
+  main { padding-left: max(14px, env(safe-area-inset-left, 0px)); padding-right: max(14px, env(safe-area-inset-right, 0px)); }
+  .review-card { grid-template-columns: auto 1fr; } .review-card .btn { grid-column: 1 / -1; }
+  .strata .lab { min-width: 0; }
+  .levelbar-in { grid-template-columns: 44px 1fr 44px; } .step { width: 44px; height: 44px; }
+  .notion-head { grid-template-columns: 1fr 64px; } .notion-head .stamp-slot { width: 64px; height: 64px; }
+  .test-cta { flex-direction: column; align-items: stretch; } .test-cta .btn { width: 100%; }
+  .pn { grid-template-columns: 1fr; }
+  h1 { font-size: 1.8rem; }
+}
+/* Grands écrans : pliable ouvert, tablette */
+@media (min-width: 860px) {
+  body[data-view="notion"] main, body[data-view="notion"] .top-in { max-width: 1120px; }
+  .n-grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 40px; align-items: start; }
+  .n-side { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 140px); max-height: calc(100vh - 160px); overflow-y: auto; padding-bottom: 10px; }
+  .n-side h2:first-child { margin-top: 26px; }
+  .bubbles { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+  .b-ring { width: 88px; height: 88px; } .b-emoji { font-size: 2.2rem; }
+}
+/* Pliables avec charnière verticale : une moitié pour lire, l’autre pour les compléments */
+@media (horizontal-viewport-segments: 2) {
+  body[data-view="notion"] main, body[data-view="notion"] .top-in { max-width: none; }
+  .n-grid { display: grid; grid-template-columns: calc(env(viewport-segment-width 0 0, 50vw) - 40px) 1fr; column-gap: calc(env(viewport-segment-left 1 0, 50vw) - env(viewport-segment-right 0 0, 50vw) + 40px); }
+}
+
+[hidden] { display: none !important; }
+.chip .y { white-space: nowrap; }
+
+/* Navigation wiki */
+.pl { background: none; border: 0; padding: 0; font: inherit; color: inherit; cursor: pointer; text-decoration: underline; text-decoration-color: var(--l3); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+h3 .pl { text-decoration-thickness: 1.5px; }
+.tl .open { margin: 0 0 10px; padding: 8px 10px; border-radius: 8px; background: var(--soft); border-left: 3px solid var(--l3); }
+.person-chip { font-weight: 700; }
+.deco { background: none; border: 0; padding: 0 2px; font-size: .7em; margin-left: 8px; vertical-align: middle; cursor: pointer; border-radius: 8px; line-height: 1; transition: transform .15s; }
+.deco:hover { transform: rotate(-12deg) scale(1.15); }
+@media (prefers-reduced-motion: reduce) { .deco { transition: none; } .deco:hover { transform: none; } }
+.result { display: flex; flex-direction: column; gap: 3px; width: 100%; text-align: left; cursor: pointer; padding: 12px 14px; margin-bottom: 8px; }
+.result strong { font-size: 1.02rem; }
+#search-q { font-size: 1.1rem; }
+
+/* Navigation entre notions et sous-notions */
+.pn-top { display: flex; justify-content: space-between; gap: 8px; margin: -4px 0 12px; }
+.pn-top .btn { display: inline-block; min-height: 34px; line-height: 24px; padding: 4px 12px; font-size: .82rem; max-width: 68%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kids-toggle { display: block; width: calc(100% - 26px); margin: -2px 0 8px 26px; text-align: left; background: var(--soft); border: 0; border-radius: 10px; padding: 8px 12px; cursor: pointer; font-size: .9rem; font-weight: 700; color: var(--ink); }
+.kids { margin: 0 0 10px 26px; border-left: 2px solid var(--line); padding-left: 10px; }
+.path .kids button.item, .kids button.item { width: 100%; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin-bottom: 6px; display: grid; grid-template-columns: 40px 1fr auto; gap: 10px; align-items: center; cursor: pointer; }
+.item.sub h3 { font-size: .98rem; margin: 0; }
+.item.sub .sum { font-size: .82rem; color: var(--muted); }
+
+/* Bandeau : titre du chapitre et bulle de notes */
+.top .title.two { display: flex; flex-direction: column; line-height: 1.15; font-size: .95rem; }
+.top .title.two small { font-weight: 400; font-size: .72rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.notes-btn { position: relative; color: var(--accent); }
+.notes-btn.has::after { content: ""; position: absolute; top: 9px; right: 9px; width: 8px; height: 8px; border-radius: 50%; background: var(--l2); box-shadow: 0 0 0 2px var(--paper); }
+
+/* Parcours : catégories */
+div.path { margin: 0; padding: 0; }
+.group { margin-bottom: 12px; }
+.group-toggle { width: 100%; display: grid; grid-template-columns: 46px 1fr 22px; gap: 12px; align-items: center; text-align: left; cursor: pointer; padding: 12px 14px; border-radius: 14px;
+  background: color-mix(in srgb, var(--accent) 9%, var(--surface)); border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--line)); color: var(--ink); }
+.group.open .group-toggle { border-radius: 14px 14px 4px 4px; }
+.g-emoji { width: 46px; height: 46px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; font-size: 1.45rem; box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 22%, var(--line)); }
+.g-t { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.g-title { font-family: var(--f-text); font-weight: 700; font-size: 1.15rem; color: var(--accent); }
+.g-bar { display: block; height: 5px; border-radius: 3px; background: color-mix(in srgb, var(--accent) 14%, var(--surface)); overflow: hidden; margin-top: 4px; max-width: 220px; }
+.g-bar i { display: block; height: 100%; background: var(--accent); }
+.chev { font-size: 1.5rem; line-height: 1; color: var(--muted); transition: transform .15s; justify-self: center; }
+.group.open > .group-head .chev, .drawer.open > .drawer-toggle .chev { transform: rotate(90deg); }
+.group-body { padding: 10px 0 2px 12px; margin-left: 22px; border-left: 2px solid color-mix(in srgb, var(--accent) 30%, transparent); }
+.g-sum { margin: 0 0 10px; }
+.node { margin-bottom: 10px; }
+.path .node > button.item, .node > button.item { margin-bottom: 0; position: relative; z-index: 1; }
+@media (prefers-reduced-motion: reduce) { .chev { transition: none; } }
+
+/* Tiroir de sous-notions, attaché sous sa notion */
+.drawer { margin: -2px 12px 0; border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--line)); border-top: 0; border-radius: 0 0 12px 12px; background: color-mix(in srgb, var(--accent) 6%, var(--surface)); overflow: hidden; }
+.drawer-toggle { width: 100%; display: grid; grid-template-columns: 18px auto 1fr; gap: 8px; align-items: center; text-align: left; background: none; border: 0; padding: 9px 14px; cursor: pointer; font-size: .88rem; font-weight: 700; color: var(--accent); }
+.drawer-toggle .chev { font-size: 1.15rem; color: var(--accent); }
+.drawer-toggle .small { justify-self: end; font-weight: 400; }
+.drawer-list { border-top: 1px solid color-mix(in srgb, var(--accent) 16%, var(--line)); }
+.row-item { width: 100%; display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: center; text-align: left; background: none; border: 0; padding: 8px 14px; cursor: pointer; color: var(--ink); font-size: .92rem; }
+.row-item + .row-item { border-top: 1px solid color-mix(in srgb, var(--accent) 10%, var(--line)); }
+.row-item:hover { background: color-mix(in srgb, var(--accent) 6%, transparent); }
+.ri-t { font-weight: 700; }
+
+.top .title.two { min-width: 0; }
+.top .title.two .t-main { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Onglet Découverte */
+.disc-sec { margin-bottom: 26px; }
+.disc-sec h2 { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.disc-sec h2 .d-ic { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 1.1rem; background: color-mix(in srgb, var(--lv) 14%, var(--surface)); }
+.disc-card { width: 100%; text-align: left; cursor: pointer; display: grid; grid-template-columns: 48px 1fr auto; gap: 12px; align-items: center; padding: 12px 14px; margin-bottom: 8px; border-left: 4px solid var(--lv); }
+.disc-card h3 { margin: 0; font-size: 1.02rem; }
+.disc-card .sum { font-size: .84rem; color: var(--muted); margin-top: 2px; }
+.disc-card .go { font-size: .78rem; font-weight: 700; color: var(--lv); margin-top: 4px; display: block; }
+
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><filter id="ink" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.2"/></filter></defs></svg>
+<header class="top"><div class="top-in" id="top"></div></header>
+<main id="main"></main>
+<nav class="nav" aria-label="Sections"><div class="nav-in">
+  <button data-act="tab" data-v="home" data-icon="home" data-label="Sujets"></button>
+  <button data-act="tab" data-v="discover" data-icon="compass" data-label="Découverte"></button>
+  <button data-act="tab" data-v="review" data-icon="review" data-label="Révisions"></button>
+  <button data-act="tab" data-v="settings" data-icon="gear" data-label="Réglages"></button>
+</div></nav>
+
+<script>
+/* Tartiflette : moteur d’apprentissage par couches. Partie 1 : état, thèmes, modules, rendu. */
+const T = (function () {
+  "use strict";
+  const KEY = "tartiflette-v1";
+  const OLDKEY = "strates-v1";
+  const LEVELS = { 1: "Découverte", 2: "Intermédiaire", 3: "Expert" };
+  const INTERVALS = [2, 7, 21, 60, 150];
+  const DOMAINS = {
+    philosophie: { emoji: "🦉", short: "Philo", title: "La philosophie" },
+    ia: { emoji: "🤖", short: "IA", title: "L’intelligence artificielle" }
+  };
+  const KINDS = {
+    niveau: "Rédiger un niveau", notion: "Approfondir une fiche", nouvelle: "Nouvelle notion", figure: "Grande figure",
+    frise: "Jalon de la frise", idee: "Idée reçue", debat: "Débat ou inconnue", glossaire: "Terme du glossaire",
+    lien: "Lien vers un autre domaine", sujet: "Nouveau domaine", autre: "Autre demande"
+  };
+  const THEMES = [
+    { id: "auto", name: "Automatique", emoji: "🌓", desc: "Clair le jour, *sombre* le soir, comme ton téléphone" },
+    { id: "saison", name: "Selon la saison", emoji: "🗓️", desc: "Change tout seul au fil de l’année." },
+    { id: "light", name: "Clair", emoji: "☀️", desc: "Fond clair, lecture *nette*", vars: { paper: "#F1F2F4", surface: "#FFFFFF", ink: "#15171C", muted: "#5A606E", line: "#D9DCE2", soft: "#E8EAEE", l1: "#3348A6", l2: "#BE3A22", l3: "#9C7410" } },
+    { id: "dark", name: "Sombre", emoji: "🌙", dark: true, desc: "Fond sombre, *repos* des yeux", vars: { paper: "#0F1115", surface: "#171A20", ink: "#E7E8EB", muted: "#9AA1AE", line: "#2A2F38", soft: "#20242C", l1: "#93A5FF", l2: "#FF8466", l3: "#E3B84A" } }
+  ];
+  const VARS = ["paper", "surface", "ink", "muted", "line", "soft", "l1", "l2", "l3", "ok", "bad"];
+
+  /* ---------- État ---------- */
+  const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  const freshProfile = () => ({ stamps: {}, srs: {}, notes: {}, levels: {} });
+  function defaults() {
+    const id = "p" + uid();
+    return { v: 2, profiles: [{ id, name: "Moi" }], current: id, data: { [id]: freshProfile() }, requests: [], settings: { scale: 1, theme: "auto" }, nav: { view: "home" } };
+  }
+  let memoryOnly = false;
+  let S;
+  try { S = JSON.parse(localStorage.getItem(KEY) || localStorage.getItem(OLDKEY) || "null") || defaults(); } catch (e) { S = defaults(); memoryOnly = true; }
+  S.requests = S.requests || [];
+  S.settings = Object.assign({ scale: 1, theme: "auto" }, S.settings || {});
+  if (!S.profiles || !S.profiles.length) S = defaults();
+  if (!S.data[S.current]) S.current = S.profiles[0].id;
+  const P = () => S.data[S.current] || (S.data[S.current] = freshProfile());
+  let saveT;
+  function save() { clearTimeout(saveT); saveT = setTimeout(() => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { memoryOnly = true; } }, 120); }
+
+  /* ---------- Utilitaires ---------- */
+  const $ = (s, el) => (el || document).querySelector(s);
+  const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const pad = n => String(n).padStart(2, "0");
+  const today = () => { const d = new Date(); return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); };
+  const addDays = (iso, n) => { const [y, m, d] = iso.split("-").map(Number); const t = new Date(y, m - 1, d + n); return t.getFullYear() + "-" + pad(t.getMonth() + 1) + "-" + pad(t.getDate()); };
+  const hash = s => { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return Math.abs(h); };
+  const shuffle = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+  const clone = o => JSON.parse(JSON.stringify(o));
+  function toast(m) { document.querySelectorAll(".toast").forEach(x => x.remove()); const t = document.createElement("div"); t.className = "toast"; t.setAttribute("role", "status"); t.textContent = m; document.body.appendChild(t); setTimeout(() => t.remove(), 2400); }
+
+  /* ---------- Thèmes ---------- */
+  function moduleThemes() { const out = []; Object.values(RAW.themes).forEach(m => (m.themes || []).forEach(t => out.push(Object.assign({ _mod: m.id }, t)))); return out; }
+  function allThemes() { return THEMES.concat(moduleThemes()); }
+  const findTheme = id => allThemes().find(x => x.id === id) || (S.settings._tc && S.settings._tc.id === id ? S.settings._tc : null);
+  function inSeason(t, md) {
+    if (!t.season) return false;
+    const [a, b] = t.season.map(x => +x.replace("-", ""));
+    return a <= b ? md >= a && md <= b : md >= a || md <= b;
+  }
+  function seasonTheme(d) {
+    d = d || new Date(); const md = (d.getMonth() + 1) * 100 + d.getDate();
+    const c = moduleThemes().filter(t => inSeason(t, md)).sort((x, y) => (y.priority || 1) - (x.priority || 1));
+    return c.length ? c[0].id : "auto";
+  }
+  function resolvedTheme() { const t = S.settings.theme === "saison" ? seasonTheme() : S.settings.theme; return findTheme(t) ? t : "auto"; }
+  function isDark() {
+    const t = resolvedTheme(); const th = findTheme(t);
+    if (t === "auto") return !!(window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches);
+    return !!(th && th.dark);
+  }
+  function applyPrefs() {
+    const root = document.documentElement;
+    root.style.setProperty("--scale", S.settings.scale);
+    const t = resolvedTheme(); const th = findTheme(t);
+    VARS.forEach(v => root.style.removeProperty("--" + v));
+    root.style.removeProperty("color-scheme");
+    if (t === "auto") root.removeAttribute("data-theme");
+    else if (th && th._mod) { if (moduleThemes().some(x => x.id === th.id)) S.settings._tc = { id: th.id, _mod: th._mod, name: th.name, emoji: th.emoji, dark: !!th.dark, vars: th.vars }; root.setAttribute("data-theme", "custom"); Object.entries(th.vars || {}).forEach(([k, v]) => { if (VARS.includes(k)) root.style.setProperty("--" + k, v); }); root.style.setProperty("color-scheme", th.dark ? "dark" : "light"); }
+    else root.setAttribute("data-theme", t);
+    root.dataset.dark = isDark() ? "1" : "0";
+  }
+
+  /* ---------- Modules : domaines et extensions ---------- */
+  const RAW = { packs: {}, exts: {}, themes: {} };
+  let PACKS = [];
+  const PK = {};
+  function idb() {
+    return new Promise((res, rej) => {
+      try { const r = indexedDB.open("tartiflette", 1); r.onupgradeneeded = () => r.result.createObjectStore("modules", { keyPath: "_key" }); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }
+      catch (e) { rej(e); }
+    });
+  }
+  async function idbAll() { try { const d = await idb(); return await new Promise(res => { const r = d.transaction("modules").objectStore("modules").getAll(); r.onsuccess = () => res(r.result || []); r.onerror = () => res([]); }); } catch (e) { return []; } }
+  async function idbPut(m) { try { const d = await idb(); await new Promise(res => { const tx = d.transaction("modules", "readwrite"); tx.objectStore("modules").put(m); tx.oncomplete = res; tx.onerror = res; }); } catch (e) { /* rien */ } }
+  async function idbDel(k) { try { const d = await idb(); await new Promise(res => { const tx = d.transaction("modules", "readwrite"); tx.objectStore("modules").delete(k); tx.oncomplete = res; tx.onerror = res; }); } catch (e) { /* rien */ } }
+  const isExt = m => m && m.type === "extension";
+  const isThemes = m => m && m.type === "themes";
+  const prefix = m => isExt(m) ? "x:" : isThemes(m) ? "t:" : "p:";
+  function validModule(m) {
+    if (!m || typeof m.id !== "string") return false;
+    if (isExt(m)) return typeof m.target === "string";
+    if (isThemes(m)) return Array.isArray(m.themes) && m.themes.every(t => t.id && t.vars);
+    return Array.isArray(m.notions) && m.notions.length > 0;
+  }
+  function keep(m, source) {
+    const bag = isExt(m) ? RAW.exts : isThemes(m) ? RAW.themes : RAW.packs;
+    const cur = bag[m.id];
+    if (!cur || (Number(m.version) || 1) > (Number(cur.version) || 1) || ((Number(m.version) || 1) === (Number(cur.version) || 1) && source === "site")) { m._source = m._source || source; bag[m.id] = m; }
+  }
+  function mergeNotion(n, en) {
+    for (const [k, v] of Object.entries(en)) {
+      if (k === "id" || k === "after") continue;
+      if (k === "levels") {
+        n.levels = n.levels || {};
+        for (const [l, L] of Object.entries(v)) {
+          const t = n.levels[l] = n.levels[l] || {};
+          for (const [lk, lv] of Object.entries(L)) { if (lk === "quiz_add") t.quiz = (t.quiz || []).concat(lv); else t[lk] = lv; }
+        }
+      } else if (k.endsWith("_add")) { const b = k.slice(0, -4); n[b] = (n[b] || []).concat(v); }
+      else n[k] = v;
+    }
+  }
+  function mergeById(list, items) {
+    (items || []).forEach(it => { const i = list.findIndex(x => x.id === it.id); if (i >= 0) Object.assign(list[i], it); else list.push(it); });
+  }
+  function applyExt(p, e) {
+    if (e.set) Object.assign(p, e.set);
+    (e.notions || []).forEach(en => {
+      const n = p.notions.find(x => x.id === en.id);
+      if (n) mergeNotion(n, en);
+      else { const nn = clone(en); delete nn.after; nn.levels = nn.levels || {}; const at = en.after ? p.notions.findIndex(x => x.id === en.after) : -1; if (at >= 0) p.notions.splice(at + 1, 0, nn); else p.notions.push(nn); }
+    });
+    p.people = p.people || []; p.glossary = p.glossary || []; p.timeline = p.timeline || []; p.inquiry = p.inquiry || [];
+    mergeById(p.people, e.people); mergeById(p.glossary, e.glossary); mergeById(p.timeline, e.timeline); mergeById(p.inquiry, e.inquiry);
+    if (e.resources_add) p.resources = (p.resources || []).concat(e.resources_add);
+  }
+  function build() {
+    PACKS = [];
+    Object.keys(PK).forEach(k => delete PK[k]);
+    Object.values(RAW.packs).forEach(base => {
+      const p = clone(base); p._source = base._source; p._exts = [];
+      Object.values(RAW.exts).filter(e => e.target === p.id).sort((a, b) => (a.order || 0) - (b.order || 0) || a.id.localeCompare(b.id)).forEach(e => { applyExt(p, e); p._exts.push(e); });
+      p.timeline = (p.timeline || []).slice().sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
+      p._n = {}; p.notions.forEach(n => { p._n[n.id] = n; });
+      const kids = {}; p.notions.forEach(n => { n._kids = []; if (n.parent && p._n[n.parent] && n.parent !== n.id) (kids[n.parent] = kids[n.parent] || []).push(n); });
+      p._tops = p.notions.map((n, i) => [n, i]).filter(([n]) => !(n.parent && p._n[n.parent])).sort((a, b) => ((a[0].rank ?? 1e9) - (b[0].rank ?? 1e9)) || (a[1] - b[1])).map(x => x[0]);
+      p._order = [];
+      const walk = (n, par, depth) => { if (depth > 3 || p._order.includes(n)) return; n._par = par; p._order.push(n); n._kids = kids[n.id] || []; n._kids.forEach((c, j) => { c._k = j; walk(c, n, depth + 1); }); };
+      p._tops.forEach((n, j) => { n._top = j; walk(n, null, 0); });
+      p._order.forEach((n, i) => { n._i = i; });
+      p._seq = p._order.filter(n => !n.group); p._seq.forEach((n, i) => { n._s = i; });
+      p._real = p.notions.filter(n => !n.group);
+      p._g = {}; (p.glossary || []).forEach(g => { p._g[g.id] = g; });
+      p._pp = {}; (p.people || []).forEach(x => { p._pp[x.id] = x; });
+      PK[p.id] = p; PACKS.push(p); delete aliasCache[p.id];
+    });
+    PACKS.sort((a, b) => a.title.localeCompare(b.title, "fr"));
+  }
+  async function loadModules() {
+    try {
+      const r = await fetch("packs/index.json", { cache: "no-cache" });
+      if (r.ok) {
+        const idx = await r.json();
+        const files = (idx.modules || []).concat(idx.packs || [], idx.extensions || []);
+        for (const e of files) {
+          try { const mr = await fetch("packs/" + e.file, { cache: "no-cache" }); if (mr.ok) { const m = await mr.json(); if (validModule(m)) { m._key = prefix(m) + m.id; keep(m, "site"); idbPut(Object.assign({}, m, { _source: "site" })); } } } catch (e2) { /* hors ligne */ }
+        }
+      }
+    } catch (e) { /* aperçu ou hors ligne */ }
+    for (const m of await idbAll()) if (validModule(m)) keep(m, m._source || "importé");
+    if (window.TARTIFLETTE_EMBEDDED) window.TARTIFLETTE_EMBEDDED.forEach(m => { const bag = isExt(m) ? RAW.exts : isThemes(m) ? RAW.themes : RAW.packs; if (!bag[m.id]) keep(m, "intégré"); });
+    build();
+  }
+  async function importModule(m) {
+    if (!validModule(m)) throw new Error("module invalide");
+    m._key = prefix(m) + m.id; m._source = "importé"; m._importedAt = today();
+    const bag = isExt(m) ? RAW.exts : isThemes(m) ? RAW.themes : RAW.packs; delete bag[m.id];
+    await idbPut(m); keep(m, "importé"); build();
+    return m;
+  }
+  async function removeModule(kind, id) {
+    const bag = kind === "x" ? RAW.exts : kind === "t" ? RAW.themes : RAW.packs; delete bag[id];
+    await idbDel(kind + ":" + id); build();
+  }
+
+  /* ---------- Progression ---------- */
+  const levelsOf = n => [1, 2, 3].filter(l => n.levels && n.levels[l] && n.levels[l].text);
+  const nkey = (p, n) => p + "/" + n;
+  const stampsOf = (p, n) => P().stamps[nkey(p, n)] || {};
+  const topLevel = (p, n) => { const s = stampsOf(p, n); return s[3] ? 3 : s[2] ? 2 : s[1] ? 1 : 0; };
+  function dueItems() {
+    const t = today(); const out = [];
+    for (const [k, v] of Object.entries(P().srs)) {
+      if (v.due > t) continue;
+      const [pp, nn, l] = k.split("/"); const pk = PK[pp]; const n = pk && pk._n[nn];
+      if (n && n.levels[l] && n.levels[l].quiz && n.levels[l].quiz.length) out.push({ p: pp, n: nn, l: +l, k });
+    }
+    return out;
+  }
+
+  /* ---------- Demandes d’ajout ---------- */
+  const reqKey = (pack, kind, ref) => pack + "|" + kind + "|" + ref;
+  const hasReq = k => S.requests.some(r => r.key === k);
+  function toggleReq(r) {
+    const k = reqKey(r.pack, r.kind, r.ref);
+    const i = S.requests.findIndex(x => x.key === k);
+    if (i >= 0) { S.requests.splice(i, 1); save(); return false; }
+    const pk = PK[r.pack];
+    S.requests.push(Object.assign({ key: k, packTitle: pk ? pk.title : (DOMAINS[r.pack] ? DOMAINS[r.pack].title : r.pack === "_libre" ? "Hors des sujets installés" : r.pack), note: "", created: today() }, r));
+    save(); return true;
+  }
+  function flagBtn(r, label) {
+    const on = hasReq(reqKey(r.pack, r.kind, r.ref));
+    return `<button class="flag" data-act="flag" data-r="${esc(JSON.stringify(r))}" data-l="${esc(label || "À développer")}" aria-pressed="${on}">${on ? "✓ Marqué à développer" : "✎ " + esc(label || "À développer")}</button>`;
+  }
+
+  /* ---------- Tampons ---------- */
+  function stampSVG(glyph, seed, top, has) {
+    const rot = (hash(seed) % 15) - 7;
+    const col = top ? `var(--l${top})` : "var(--line)";
+    const len = Array.from(glyph).length;
+    const fs = len <= 1 ? 40 : len === 2 ? 32 : len === 3 ? 25 : 20;
+    const dots = [1, 2, 3].map((l, i) => `<circle cx="${38 + i * 12}" cy="76" r="3.6" fill="${has && has[l] ? `var(--l${l})` : "none"}" stroke="${has && has[l] ? `var(--l${l})` : col}" stroke-width="1.4"/>`).join("");
+    return `<svg class="stamp" viewBox="0 0 100 100" aria-hidden="true"><g ${top ? 'filter="url(#ink)"' : ""} transform="rotate(${rot} 50 50)"><circle cx="50" cy="50" r="44" fill="none" stroke="${col}" stroke-width="${top ? 4.5 : 2}" ${top ? "" : 'stroke-dasharray="5 5"'}/><circle cx="50" cy="50" r="37.5" fill="none" stroke="${col}" stroke-width="1.3"/><text x="50" y="47" text-anchor="middle" dominant-baseline="central" font-family="Literata, Georgia, serif" font-weight="700" font-size="${fs}" fill="${col}">${esc(glyph)}</text>${dots}</g></svg>`;
+  }
+  function minis(p, n, wide) { const s = stampsOf(p, n); return `<span class="minis${wide ? " wide" : ""}" aria-label="Niveaux obtenus : ${[1, 2, 3].filter(l => s[l]).map(l => LEVELS[l]).join(", ") || "aucun"}">${[1, 2, 3].map(l => `<i class="${s[l] ? "on" + l : ""}"></i>`).join("")}</span>`; }
+
+  /* ---------- Texte enrichi ---------- */
+  function domainInfo(id) { const p = PK[id]; if (p) return { emoji: p.emoji || "📘", short: p.short || p.title, title: p.title }; if (id === "_libre") return { emoji: "✨", short: "Libre", title: "Hors des sujets installés" }; return DOMAINS[id] || { emoji: "📘", short: id, title: id }; }
+  function inline(s, pid) {
+    let h = esc(s);
+    h = h.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+    h = h.replace(/\[\[([^\]|]+)\|([^\]]+)\]\]|\[\[([^\]]+)\]\]/g, (m, id, label, id2) => {
+      const ref = id || id2; const [pp, nn] = ref.includes(":") ? ref.split(":") : [pid, ref];
+      if (nn.startsWith("@")) {
+        const pkp = PK[pp]; const x = pkp && pkp._pp[nn.slice(1)];
+        const lab = label || (x ? esc(x.n) : esc(nn.slice(1)));
+        return x ? `<button class="pl" data-act="person" data-p="${esc(pp)}" data-x="${esc(x.id)}">${lab}</button>` : lab;
+      }
+      const pk = PK[pp]; const n = pk && pk._n[nn];
+      const other = pp !== pid; const di = domainInfo(pp);
+      const tag = other ? `<span class="xtag" title="Autre domaine : ${esc(di.title)}">${di.emoji} ${esc(di.short)}</span>` : "";
+      const text = label || (n ? esc(n.title) : esc(nn));
+      if (!n) return `<button class="wl missing" data-act="missing" data-p="${esc(pp)}" data-n="${esc(nn)}" data-from="${esc(pid)}" data-label="${text}" title="${other ? "Domaine pas encore installé" : "Notion pas encore rédigée"}">${text}${tag}</button>`;
+      return `<button class="wl" data-act="notion" data-p="${esc(pp)}" data-n="${esc(nn)}"${other ? ` data-cross="1"` : ""}>${text}${tag}</button>`;
+    });
+    h = h.replace(/\{\{([^}|]+)(?:\|([^}]+))?\}\}/g, (m, id, label) => {
+      const g = PK[pid] && PK[pid]._g[id];
+      return `<button class="gl" data-act="gloss" data-p="${esc(pid)}" data-g="${esc(id)}">${label || (g ? esc(g.t.toLowerCase()) : id)}</button>`;
+    });
+    return h;
+  }
+  const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const aliasCache = {};
+  function aliasesOf(pid) {
+    if (aliasCache[pid]) return aliasCache[pid];
+    const pk = PK[pid]; const list = [];
+    (pk && pk.people || []).forEach(x => (x.aliases && x.aliases.length ? x.aliases : [x.n]).forEach(a => list.push([a, x.id, new RegExp("(^|[^\\p{L}])(" + escRe(esc(a)) + ")(?![\\p{L}])", "u")])));
+    list.sort((a, b) => b[0].length - a[0].length);
+    return (aliasCache[pid] = list);
+  }
+  function autoLink(html, pid, linked) {
+    if (!PK[pid]) return html;
+    (html.match(/data-act="person" data-p="[^"]*" data-x="([^"]+)"/g) || []).forEach(m => linked.add(m.replace(/.*data-x="/, "").replace(/"$/, "")));
+    let parts = html.split(/(<[^>]+>)/);
+    for (const [, id, re] of aliasesOf(pid)) {
+      if (linked.has(id)) continue;
+      let depth = 0;
+      for (let i = 0; i < parts.length; i++) {
+        const t = parts[i];
+        if (t.startsWith("<")) { if (/^<(button|a)[\s>]/i.test(t)) depth++; else if (/^<\/(button|a)>/i.test(t)) depth--; continue; }
+        if (depth > 0 || !t) continue;
+        const m = re.exec(t);
+        if (m) { const at = m.index + m[1].length; parts.splice(i, 1, t.slice(0, at), `<button class="pl" data-act="person" data-p="${esc(pid)}" data-x="${esc(id)}">`, m[2], "</button>", t.slice(at + m[2].length)); linked.add(id); break; }
+      }
+    }
+    return parts.join("");
+  }
+  function rich(text, pid, linked) { return autoLink(inline(text || "", pid), pid, linked || new Set()); }
+  function md(text, pid, linked) {
+    linked = linked || new Set();
+    return String(text || "").trim().split(/\n\s*\n/).map(b => {
+      b = b.trim();
+      if (b.startsWith("::figure ")) return figure(b.slice(9).trim());
+      if (b.startsWith("## ")) return `<h3>${inline(b.slice(3), pid)}</h3>`;
+      if (b.startsWith("> ")) return `<div class="callout">${autoLink(inline(b.replace(/^> ?/gm, ""), pid), pid, linked)}</div>`;
+      if (/^- /.test(b)) return `<ul>${b.split(/\n/).map(l => `<li>${autoLink(inline(l.replace(/^- /, ""), pid), pid, linked)}</li>`).join("")}</ul>`;
+      return `<p>${autoLink(inline(b, pid), pid, linked).replace(/\n/g, "<br>")}</p>`;
+    }).join("");
+  }
+
+  /* ---------- Figures interactives ---------- */
+  function wlRGB(w) {
+    let r = 0, g = 0, b = 0;
+    if (w < 440) { r = -(w - 440) / 60; b = 1; } else if (w < 490) { g = (w - 440) / 50; b = 1; } else if (w < 510) { g = 1; b = -(w - 510) / 20; }
+    else if (w < 580) { r = (w - 510) / 70; g = 1; } else if (w < 645) { r = 1; g = -(w - 645) / 65; } else { r = 1; }
+    let f = w < 420 ? 0.3 + 0.7 * (w - 380) / 40 : w > 700 ? 0.3 + 0.7 * (750 - w) / 50 : 1;
+    f = Math.max(0.15, f);
+    const c = x => Math.round(255 * Math.pow(x * f, 0.8));
+    return `rgb(${c(r)},${c(g)},${c(b)})`;
+  }
+  const ELEMENTS = { H: { n: "Hydrogène", l: [656.3, 486.1, 434.0, 410.2] }, He: { n: "Hélium", l: [667.8, 587.6, 501.6, 471.3, 447.1] }, Na: { n: "Sodium", l: [589.0, 589.6] }, Ca: { n: "Calcium", l: [393.4, 396.8, 422.7] } };
+  let figSeq = 0;
+  const resetFig = () => { figSeq = 0; };
+  function figure(kind) {
+    const id = "fig" + (++figSeq);
+    if (kind === "spectre") return `<div class="figure" data-fig="spectre" id="${id}" data-on="H,Na" data-z="0"><div class="ft">Le spectre d’une étoile</div>
+        <svg viewBox="0 0 600 120" role="img" aria-label="Spectre de 380 à 750 nanomètres avec des raies d’absorption"></svg>
+        <div class="chips" role="group" aria-label="Éléments présents">${Object.entries(ELEMENTS).map(([k, e]) => `<button class="chip" data-act="fig-el" data-f="${id}" data-k="${k}" aria-pressed="${k === "H" || k === "Na"}">${e.n}</button>`).join("")}</div>
+        <label class="small">Vitesse d’éloignement : <span class="out"></span><input type="range" min="-0.02" max="0.12" step="0.001" value="0" data-act="fig-z" data-f="${id}" aria-label="Décalage vers le rouge"></label>
+        <p class="small muted" style="margin:6px 0 0">Choisis les éléments présents dans l’atmosphère de l’étoile, puis fais-la s’éloigner : toutes ses raies glissent ensemble vers le rouge.</p></div>`;
+    if (kind === "parallaxe") return `<div class="figure" data-fig="parallaxe" id="${id}" data-d="13"><div class="ft">La parallaxe</div>
+        <svg viewBox="0 0 600 220" role="img" aria-label="Schéma de la parallaxe : la Terre de part et d’autre du Soleil vise une étoile"></svg>
+        <label class="small">Distance de l’étoile : <span class="out"></span><input type="range" min="0" max="3" step="0.01" value="1" data-act="fig-d" data-f="${id}" aria-label="Distance en parsecs, échelle logarithmique"></label>
+        <p class="small muted out2" style="margin:6px 0 0"></p></div>`;
+    if (kind === "expansion") return `<div class="figure" data-fig="expansion" id="${id}" data-a="1" data-ref="0"><div class="ft">Un Univers sans centre</div>
+        <svg viewBox="0 0 600 300" role="img" aria-label="Des galaxies qui s’éloignent les unes des autres quand l’Univers grandit"></svg>
+        <label class="small">Taille de l’Univers : <span class="out"></span><input type="range" min="0.6" max="1.6" step="0.01" value="1" data-act="fig-a" data-f="${id}" aria-label="Facteur d’échelle"></label>
+        <p class="small muted" style="margin:6px 0 0">Touche une galaxie pour t’y installer : de n’importe laquelle, toutes les autres s’éloignent, d’autant plus vite qu’elles sont loin.</p></div>`;
+    return "";
+  }
+  const GAL = (() => { const pts = []; let s = 7; const r = () => { s = (s * 9301 + 49297) % 233280; return s / 233280; }; for (let i = 0; i < 26; i++) pts.push([300 + (r() - 0.5) * 380, 150 + (r() - 0.5) * 190]); pts[0] = [300, 150]; return pts; })();
+  function drawFigures(root) {
+    (root || document).querySelectorAll(".figure").forEach(f => {
+      const svg = $("svg", f);
+      if (f.dataset.fig === "spectre") {
+        const on = f.dataset.on ? f.dataset.on.split(",").filter(Boolean) : [];
+        const z = parseFloat(f.dataset.z) || 0;
+        const x = w => 20 + (w - 380) / 370 * 560;
+        let stops = ""; for (let w = 380; w <= 750; w += 10) stops += `<stop offset="${((w - 380) / 370 * 100).toFixed(1)}%" stop-color="${wlRGB(w)}"/>`;
+        let lines = "";
+        on.forEach(k => ELEMENTS[k].l.forEach(w0 => { const w = w0 * (1 + z); if (w >= 380 && w <= 750) lines += `<rect x="${(x(w) - 1.6).toFixed(1)}" y="14" width="3.2" height="62" fill="#000" opacity=".85"/>`; }));
+        let ticks = ""; [400, 450, 500, 550, 600, 650, 700, 750].forEach(w => { ticks += `<line x1="${x(w)}" y1="80" x2="${x(w)}" y2="86" stroke="currentColor"/><text x="${x(w)}" y="100" font-size="12" text-anchor="middle" fill="currentColor">${w}</text>`; });
+        svg.innerHTML = `<defs><linearGradient id="g-${f.id}">${stops}</linearGradient></defs><rect x="20" y="14" width="560" height="62" rx="4" fill="url(#g-${f.id})"/>${lines}${ticks}<text x="580" y="116" font-size="11" text-anchor="end" fill="currentColor" opacity=".7">longueur d’onde (nm)</text>`;
+        svg.style.color = "var(--muted)";
+        const v = Math.round(z * 299792);
+        $(".out", f).textContent = z === 0 ? "immobile" : (v > 0 ? "s’éloigne à " : "s’approche à ") + Math.abs(v).toLocaleString("fr-FR") + " km/s (z = " + z.toFixed(3).replace(".", ",") + ")";
+      }
+      if (f.dataset.fig === "parallaxe") {
+        const d = parseFloat(f.dataset.d);
+        const sx = 130 + Math.min(1, Math.log10(d) / 3) * 420;
+        const p = 1 / d;
+        svg.innerHTML = `<g fill="none" stroke="var(--muted)"><ellipse cx="80" cy="110" rx="30" ry="70" stroke-dasharray="4 4"/></g>
+          <circle cx="80" cy="110" r="9" fill="var(--l3)"/><text x="80" y="200" font-size="12" text-anchor="middle" fill="var(--muted)">Soleil</text>
+          <circle cx="80" cy="40" r="6" fill="var(--l1)"/><text x="94" y="30" font-size="12" fill="var(--muted)">Terre en janvier</text>
+          <circle cx="80" cy="180" r="6" fill="var(--l1)"/><text x="94" y="198" font-size="12" fill="var(--muted)">en juillet</text>
+          <line x1="80" y1="40" x2="${sx}" y2="110" stroke="var(--ink)" stroke-width="1.2"/><line x1="80" y1="180" x2="${sx}" y2="110" stroke="var(--ink)" stroke-width="1.2"/>
+          <circle cx="${sx}" cy="110" r="6" fill="var(--ink)"/><text x="${sx}" y="95" font-size="12" text-anchor="middle" fill="var(--ink)">étoile</text>
+          <text x="590" y="214" font-size="10" text-anchor="end" fill="var(--muted)">angle très exagéré</text>`;
+        const ly = d * 3.2616;
+        const ang = p >= 0.1 ? p.toFixed(2).replace(".", ",") + " seconde d’arc" : (p * 1000).toFixed(p * 1000 < 10 ? 2 : 1).replace(".", ",") + " millième de seconde d’arc";
+        $(".out", f).textContent = (d < 10 ? d.toFixed(1).replace(".", ",") : Math.round(d).toLocaleString("fr-FR")) + " parsecs, soit " + Math.round(ly).toLocaleString("fr-FR") + " années-lumière";
+        const km = 0.02325 / (p * 4.8481e-6) / 1000;
+        $(".out2", f).textContent = "Parallaxe : " + ang + ". C’est l’angle sous lequel on verrait une pièce de 1 € placée à " + Math.round(km).toLocaleString("fr-FR") + " km.";
+      }
+      if (f.dataset.fig === "expansion") {
+        const a = parseFloat(f.dataset.a); const ref = +f.dataset.ref;
+        const pos = GAL.map(([x, y]) => [300 + (x - 300) * a, 150 + (y - 150) * a]);
+        const [rx, ry] = pos[ref];
+        let arrows = "", dots = "";
+        pos.forEach(([x, y], i) => {
+          if (i !== ref) { const dx = (x - rx) * 0.22, dy = (y - ry) * 0.22; arrows += `<line x1="${x.toFixed(1)}" y1="${y.toFixed(1)}" x2="${(x + dx).toFixed(1)}" y2="${(y + dy).toFixed(1)}" stroke="var(--l2)" stroke-width="1.6" marker-end="url(#ar-${f.id})" opacity=".85"/>`; }
+          dots += `<g data-act="fig-ref" data-f="${f.id}" data-i="${i}" style="cursor:pointer"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="14" fill="transparent"/><ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="${i === ref ? 8 : 5.5}" ry="${i === ref ? 4.5 : 3}" fill="${i === ref ? "var(--l1)" : "var(--ink)"}" transform="rotate(${(i * 37) % 180} ${x.toFixed(1)} ${y.toFixed(1)})"/></g>`;
+        });
+        svg.innerHTML = `<defs><marker id="ar-${f.id}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--l2)"/></marker><clipPath id="cl-${f.id}"><rect width="600" height="300" rx="8"/></clipPath></defs><g clip-path="url(#cl-${f.id})"><rect width="600" height="300" fill="var(--soft)"/>${arrows}${dots}</g><text x="${rx}" y="${ry - 12}" font-size="12" text-anchor="middle" fill="var(--l1)" font-weight="700">vous</text>`;
+        $(".out", f).textContent = "× " + a.toFixed(2).replace(".", ",") + " par rapport à aujourd’hui";
+      }
+    });
+  }
+
+  return { KEY, LEVELS, INTERVALS, DOMAINS, KINDS, THEMES, get S() { return S; }, set S(v) { S = v; }, get memoryOnly() { return memoryOnly; }, P, save, uid, freshProfile, defaults,
+    $, esc, today, addDays, shuffle, clone, toast, seasonTheme, resolvedTheme, isDark, applyPrefs,
+    RAW, get PACKS() { return PACKS; }, PK, loadModules, importModule, removeModule, isExt, isThemes, validModule, allThemes, moduleThemes, findTheme,
+    levelsOf, nkey, stampsOf, topLevel, dueItems, reqKey, hasReq, toggleReq, flagBtn, stampSVG, minis, domainInfo, md, rich, inline, drawFigures, resetFig };
+})();
+
+</script>
+<script>
+(function () {
+  "use strict";
+  const { LEVELS, INTERVALS, KINDS, THEMES, P, save, uid, freshProfile, $, esc, today, addDays, shuffle, toast, PK,
+    levelsOf, nkey, stampsOf, topLevel, dueItems, toggleReq, flagBtn, stampSVG, minis, domainInfo, md, rich, drawFigures, resetFig } = T;
+  const S = () => T.S;
+  const UPCOMING = [["ia", "🤖", "L’intelligence artificielle"], ["philosophie", "🦉", "La philosophie"]];
+
+  const I = {
+    back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
+    home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 18h16M4 13h16M4 8h16"/></svg>',
+    compass: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>',
+    review: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v4.5h-4.5"/><path d="M12 8v4l3 2"/></svg>',
+    gear: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2.2"/><circle cx="10" cy="17" r="2.2"/></svg>',
+    bars: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h11M4 17h6"/></svg>',
+    bubbles: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="7" cy="8" r="3.2"/><circle cx="17" cy="8" r="3.2"/><circle cx="7" cy="17" r="3.2"/><circle cx="17" cy="17" r="3.2"/></svg>',
+    note: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M5 4h10l4 4v12H5z"/><path d="M15 4v4h4M8 12h8M8 16h5"/></svg>',
+    loupe: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg>',
+    livre: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/></svg>',
+    article: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M8.5 8h7M8.5 12h7M8.5 16h4"/></svg>',
+    cours: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 9l9-4.5L21 9l-9 4.5z"/><path d="M7 11v4.5c1.5 1.5 3 2 5 2s3.5-.5 5-2V11"/></svg>',
+    video: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="3"/><path d="M10.5 9.5l4.5 2.5-4.5 2.5z" fill="currentColor"/></svg>',
+    recherche: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 3.5v6L4.5 18a1.8 1.8 0 0 0 1.6 2.5h11.8a1.8 1.8 0 0 0 1.6-2.5L15 9.5v-6M7.5 3.5h9"/></svg>'
+  };
+  const RES_LABEL = { livre: "Livre", article: "Article", cours: "Cours", video: "Vidéo", recherche: "Article de recherche" };
+  const peek = new Set(); const openKids = new Set(); const openGroups = new Set((T.S.settings && T.S.settings.openGroups) || []);
+  let Q = null;
+  const stack = [];
+
+  function go(nav, push) { if (push !== false) stack.push(JSON.parse(JSON.stringify(S().nav))); S().nav = nav; save(); render(); window.scrollTo(0, 0); }
+  function back() { S().nav = stack.length ? stack.pop() : { view: "home" }; save(); render(); window.scrollTo(0, 0); }
+
+  /* ---------- Accueil ---------- */
+  function logoSVG() {
+    return `<svg class="logo-svg" viewBox="0 0 120 112" aria-hidden="true">
+      <g class="steam" fill="none" stroke="var(--muted)" stroke-width="3" stroke-linecap="round" opacity=".6"><path d="M42 28c-6-6 6-10 0-17"/><path d="M60 24c-6-6 6-10 0-17"/><path d="M78 28c-6-6 6-10 0-17"/></g>
+      <clipPath id="gratin"><path d="M14 66V52c0-10 8-16 18-16h56c10 0 18 6 18 16v14z"/></clipPath>
+      <g clip-path="url(#gratin)">
+        <rect x="10" y="30" width="100" height="40" fill="#E9B44C"/>
+        <g fill="#F4CF72"><ellipse cx="26" cy="62" rx="8" ry="3.6"/><ellipse cx="46" cy="64" rx="8" ry="3.6"/><ellipse cx="68" cy="62" rx="8" ry="3.6"/><ellipse cx="90" cy="64" rx="8" ry="3.6"/></g>
+        <rect x="10" y="48" width="100" height="8" fill="#EFC25E"/>
+        <g fill="#A83E26"><rect x="20" y="49" width="7" height="6" rx="1.8"/><rect x="36" y="50" width="7" height="6" rx="1.8"/><rect x="53" y="49" width="7" height="6" rx="1.8"/><rect x="70" y="50" width="7" height="6" rx="1.8"/><rect x="87" y="49" width="7" height="6" rx="1.8"/></g>
+        <path d="M10 48c5-9 13-11 20-7 6-8 16-8 22-3 6-7 17-7 22-1 6-6 16-5 21 1 5-4 11-2 15 3v8H10z" fill="#F8E4A8"/>
+        <g fill="#D98E2C" opacity=".9"><ellipse cx="36" cy="43" rx="4.5" ry="2"/><ellipse cx="66" cy="41" rx="5.5" ry="2.3"/><ellipse cx="90" cy="45" rx="3.5" ry="1.7"/><ellipse cx="52" cy="46" rx="2.5" ry="1.3"/></g>
+      </g>
+      <rect x="1" y="70" width="15" height="9" rx="4.5" fill="#8E3F22"/><rect x="104" y="70" width="15" height="9" rx="4.5" fill="#8E3F22"/>
+      <path d="M9 64h102l-7 31a9 9 0 0 1-9 7H25a9 9 0 0 1-9-7z" fill="#B4532F"/>
+      <rect x="8" y="62" width="104" height="7" rx="3.5" fill="#C96A41"/>
+      <path d="M30 63c0 7 6 8 6 1zM62 63c0 10 7 11 7 1zM88 63c0 6 5 7 5 1z" fill="#F8E4A8"/>
+      <g fill="#3E1D12"><circle cx="48" cy="81" r="3.6"/><circle cx="72" cy="81" r="3.6"/></g>
+      <g fill="#FFF6E5"><circle cx="49.3" cy="79.7" r="1.2"/><circle cx="73.3" cy="79.7" r="1.2"/></g>
+      <path d="M54 88q6 5 12 0" fill="none" stroke="#3E1D12" stroke-width="2.6" stroke-linecap="round"/>
+      <g fill="#F08A7A" opacity=".75"><ellipse cx="38" cy="88" rx="4.5" ry="2.4"/><ellipse cx="82" cy="88" rx="4.5" ry="2.4"/></g>
+    </svg>`;
+  }
+  function ring(p) {
+    const ns = p._real.length || 1; const c = l => p._real.filter(n => stampsOf(p.id, n.id)[l]).length / ns;
+    return `<svg class="ring" viewBox="0 0 100 100" aria-hidden="true">${[[44, 1], [37, 2], [30, 3]].map(([r, l]) => { const L = 2 * Math.PI * r; return `<circle cx="50" cy="50" r="${r}" fill="none" stroke="var(--soft)" stroke-width="5"/>` + (c(l) > 0 ? `<circle cx="50" cy="50" r="${r}" fill="none" stroke="var(--l${l})" stroke-width="5" stroke-linecap="round" stroke-dasharray="${(c(l) * L).toFixed(1)} ${L.toFixed(1)}" transform="rotate(-90 50 50)"/>` : ""); }).join("")}</svg>`;
+  }
+  function vHome() {
+    const due = dueItems().length; const detail = !!S().settings.homeDetail;
+    const th = T.findTheme(T.resolvedTheme());
+    const deco = th ? `<button class="deco" data-act="goto-themes" aria-label="Thème ${esc(th.name)} : changer de thème" title="Changer de thème">${th.emoji}</button>` : "";
+    let h = `<div class="hero">${logoSVG()}<div><h1>Tartiflette${deco}</h1><p class="lead">Le savoir en couches superposées. Choisis un sujet, puis descends de la découverte jusqu’à l’expertise.</p></div></div>`;
+    h += `<div class="card review-card"><span class="big">${due}</span><div><strong>${due ? "À revoir aujourd’hui" : "Rien à revoir aujourd’hui"}</strong><div class="small muted">${due ? "Quelques minutes pour ancrer ce que tu as appris." : "Gagne des tampons : les notions reviendront ici au bon moment."}</div></div>${due ? `<button class="btn primary" data-act="start-review">Réviser</button>` : ""}</div>`;
+    h += `<div class="spread" style="margin:22px 0 10px"><h2 style="margin:0">Sujets</h2><div class="row">${T.PACKS.length > 8 ? `<input type="search" id="pack-search" placeholder="Filtrer" aria-label="Filtrer les sujets" style="max-width:140px">` : ""}<button class="btn small peek" data-act="home-detail" aria-pressed="${detail}" aria-label="${detail ? "Revenir aux bulles" : "Voir le détail de l’avancement"}">${detail ? I.bubbles : I.bars} ${detail ? "Bulles" : "Avancement"}</button></div></div>`;
+    if (!T.PACKS.length) h += `<div class="empty">Aucun sujet installé. Ajoute un module depuis les réglages.</div>`;
+    const soon = UPCOMING.filter(([id]) => !PK[id]);
+    if (!detail) {
+      h += `<div class="bubbles">` + T.PACKS.map(p => `<button class="bubble" data-act="pack" data-p="${esc(p.id)}" data-name="${esc(p.title.toLowerCase())}" style="--accent:${esc(T.isDark() ? p.accentDark || p.accent : p.accent)}" aria-label="${esc(p.title)}"><span class="b-ring">${ring(p)}<span class="b-emoji" aria-hidden="true">${esc(p.emoji || "📘")}</span></span><span class="b-name">${esc(p.short || p.title)}</span></button>`).join("")
+        + soon.map(([id, e, t]) => `<button class="bubble soon" data-act="soon" data-p="${id}" data-t="${esc(t)}" aria-label="${esc(t)}, bientôt"><span class="b-ring"><span class="b-emoji" aria-hidden="true">${e}</span></span><span class="b-name">${esc(T.DOMAINS[id] ? T.DOMAINS[id].short : t)}</span><span class="b-soon">bientôt</span></button>`).join("") + `</div>`;
+    } else {
+      T.PACKS.forEach(p => {
+        const ns = p._real; const count = l => ns.filter(n => stampsOf(p.id, n.id)[l]).length;
+        h += `<div class="card pack-row" data-act="pack" data-p="${esc(p.id)}" data-name="${esc(p.title.toLowerCase())}" role="button" tabindex="0" style="--accent:${esc(T.isDark() ? p.accentDark || p.accent : p.accent)}">
+          <div class="pr-main"><span class="emoji" aria-hidden="true">${esc(p.emoji || "📘")}</span><div class="pr-t"><h3>${esc(p.title)}</h3><div class="small muted">${esc(p.subtitle || "")}</div></div></div>
+          <div class="pr-more"><div class="q">${esc(p.question || "")}</div>
+          <div class="meter">${[1, 2, 3].map(l => `<span class="lv${l}">${LEVELS[l]}</span><span class="bar lv${l}"><i style="width:${Math.round(count(l) / ns.length * 100)}%"></i></span><span>${count(l)}/${ns.length}</span>`).join("")}</div>
+          <div class="small muted" style="margin-top:8px">État des connaissances : ${esc(p.knowledge || "")}${p._exts.length ? `, ${p._exts.length} extension${p._exts.length > 1 ? "s" : ""}` : ""}</div></div></div>`;
+      });
+      if (soon.length) h += `<p class="small muted">Bientôt : ${soon.map(([, e, t]) => e + " " + esc(t)).join(", ")}.</p>`;
+    }
+    return h;
+  }
+
+  /* ---------- Parcours : catégories, notions et sous-notions ---------- */
+  const realDesc = n => n._kids.flatMap(c => [c].concat(realDesc(c))).filter(x => !x.group);
+  function itemHTML(p, n, num) {
+    const lv = levelsOf(n);
+    return `<button class="item" data-act="notion" data-p="${esc(p.id)}" data-n="${esc(n.id)}"><span class="stamp-slot" style="width:52px;height:52px">${stampSVG(n.glyph || "?", n.id, topLevel(p.id, n.id), stampsOf(p.id, n.id))}</span>
+      <span>${num ? `<span class="num">${num}</span>` : ""}<h3>${esc(n.title)}</h3><div class="sum">${esc(n.summary || "")}</div>${lv.length === 0 ? `<div class="small muted" style="margin-top:3px">En préparation</div>` : lv.length < 3 ? `<div class="small muted" style="margin-top:3px">Niveaux disponibles : ${lv.map(l => LEVELS[l]).join(", ")}</div>` : ""}</span>
+      ${minis(p.id, n.id)}</button>`;
+  }
+  function drawerHTML(p, n) {
+    if (!n._kids.length) return "";
+    const key = p.id + "/" + n.id; const open = openKids.has(key);
+    const done = n._kids.filter(c => topLevel(p.id, c.id) >= 1).length;
+    return `<div class="drawer${open ? " open" : ""}"><button class="drawer-toggle" data-act="kids" data-k="${esc(key)}" aria-expanded="${open}"><span class="chev" aria-hidden="true">›</span><span>${n._kids.length} ${esc((n.childrenLabel || "sous-notions").toLowerCase())}</span><span class="muted small">${done ? `${done} validé${done > 1 ? "s" : ""}` : ""}</span></button>
+      ${open ? `<div class="drawer-list">${n._kids.map(c => `<button class="row-item" data-act="notion" data-p="${esc(p.id)}" data-n="${esc(c.id)}"><span class="stamp-slot" style="width:34px;height:34px">${stampSVG(c.glyph || "?", c.id, topLevel(p.id, c.id), stampsOf(p.id, c.id))}</span><span class="ri-t">${esc(c.title)}</span>${minis(p.id, c.id)}</button>`).join("")}</div>` : ""}</div>`;
+  }
+  function groupProgress(p, g) { const all = realDesc(g); const done = all.filter(x => topLevel(p.id, x.id) >= 1).length; return { all: all.length, done }; }
+  function pathHTML(p) {
+    let num = 0;
+    return `<div class="path">` + p._tops.map(n => {
+      if (n.group) {
+        const key = p.id + "/" + n.id; const open = openGroups.has(key); const pr = groupProgress(p, n);
+        const body = n._kids.map(c => `<div class="node">${itemHTML(p, c, (++num) + ".")}${drawerHTML(p, c)}</div>`).join("");
+        return `<section class="group${open ? " open" : ""}"><div class="group-head"><button class="group-toggle" data-act="group" data-k="${esc(key)}" aria-expanded="${open}"><span class="g-emoji" aria-hidden="true">${esc(n.emoji || "📁")}</span><span class="g-t"><span class="g-title">${esc(n.title)}</span><span class="small muted">${pr.all} notion${pr.all > 1 ? "s" : ""}${pr.done ? `, ${pr.done} validée${pr.done > 1 ? "s" : ""}` : ""}</span><span class="g-bar" aria-hidden="true"><i style="width:${pr.all ? Math.round(pr.done / pr.all * 100) : 0}%"></i></span></span><span class="chev" aria-hidden="true">›</span></button></div>
+          ${open ? `<div class="group-body">${n.summary ? `<p class="small muted g-sum">${esc(n.summary)} <button class="pl" data-act="notion" data-p="${esc(p.id)}" data-n="${esc(n.id)}">Présentation de la catégorie</button></p>` : ""}${body}</div>` : ""}</section>`;
+      }
+      return `<div class="node">${itemHTML(p, n, (++num) + ".")}${drawerHTML(p, n)}</div>`;
+    }).join("") + `</div>`;
+  }
+  function vGroup(p, g) {
+    const pr = groupProgress(p, g);
+    let h = `<div class="crumb small muted">${esc(p.emoji || "")} ${esc(p.title)}, catégorie</div><h1><span aria-hidden="true">${esc(g.emoji || "")}</span> ${esc(g.title)}</h1><p class="muted">${pr.all} notions, ${pr.done} validée${pr.done > 1 ? "s" : ""}</p>`;
+    if (g.intro) h += `<div class="reading">${md(g.intro, p.id)}</div>`;
+    h += `<div class="path">` + g._kids.map((c, i) => `<div class="node">${itemHTML(p, c, (i + 1) + ".")}${drawerHTML(p, c)}</div>`).join("") + `</div>`;
+    const first = p._seq.find(x => realDesc(g).includes(x));
+    if (first) h += `<div class="row" style="margin-top:16px"><button class="btn primary" data-act="notion" data-p="${esc(p.id)}" data-n="${esc(first.id)}">Commencer par « ${esc(first.title)} »</button></div>`;
+    return h;
+  }
+
+  /* ---------- Sujet ---------- */
+  function vPack() {
+    const p = PK[S().nav.pack]; if (!p) return vHome();
+    const tab = S().nav.tab || "path";
+    const tabs = [["path", "Parcours"], ["inquiry", "Enquête"], ["timeline", "Frise"], ["people", "Figures"], ["glossary", "Glossaire"]];
+    let h = `<div class="pack-head"><span class="kd">État des connaissances : ${esc(p.knowledge || "")}</span><h1><span aria-hidden="true">${esc(p.emoji || "")}</span> ${esc(p.title)}</h1></div>
+      <div class="tabs" role="tablist">${tabs.map(([k, l]) => `<button class="tab" role="tab" data-act="ptab" data-k="${k}" aria-selected="${tab === k}">${l}</button>`).join("")}</div>`;
+    if (tab === "path") {
+      h += `<p class="lead">${esc(p.intro || "")}</p>` + pathHTML(p);
+      if (p.resources && p.resources.length) h += `<h2>Pour tout le sujet</h2>` + resList(p.resources);
+      h += `<div class="row" style="margin-top:18px">${flagBtn({ pack: p.id, kind: "nouvelle", ref: "sujet", label: "Nouvelles notions pour " + p.title }, "Proposer d’autres notions")}</div>`;
+    }
+    if (tab === "inquiry") {
+      h += `<div class="inq-hero">${esc(p.question)}</div><p class="muted">L’enquête découpe la grande question en pistes. Obtiens le tampon Découverte des notions de chaque piste pour en révéler la conclusion.</p>`;
+      (p.inquiry || []).forEach((c, i) => {
+        const done = c.notions.every(nn => topLevel(p.id, nn) >= 1);
+        h += `<div class="card clue"><div class="n">Piste ${i + 1}</div><h3>${esc(c.q)}</h3><p style="margin:0">${esc(c.intro)}</p>
+          <div class="nlinks">${c.notions.map(nn => { const n = p._n[nn]; return n ? `<button class="chip" data-act="notion" data-p="${esc(p.id)}" data-n="${esc(nn)}">${minis(p.id, nn)} ${esc(n.title)}</button>` : ""; }).join("")}</div>
+          ${done ? `<div class="found"><strong style="font-family:var(--f-ui)">Ce que l’enquête a établi.</strong> ${esc(c.conclusion)}</div>` : `<div class="locked">Conclusion à découvrir : ${c.notions.filter(nn => topLevel(p.id, nn) >= 1).length} notion(s) sur ${c.notions.length} validée(s).</div>`}</div>`;
+      });
+    }
+    if (tab === "timeline") {
+      h += `<p class="muted">Les jalons qui ont façonné le sujet : ce qu’on a découvert, qui l’a fait, et les questions restées en suspens. Marque « à développer » ceux qui mériteraient une leçon à part entière.</p><div class="tl">` + (p.timeline || []).map((e, i) => tlEvent(p, e, i)).join("") + `</div>`;
+    }
+    if (tab === "people") {
+      const people = (p.people || []).slice().sort((a, b) => a.n.localeCompare(b.n, "fr"));
+      h += `<p class="muted">Les femmes et les hommes qui ont fait avancer le sujet. Les portraits marqués « Leçon » ont une page complète.</p>` + people.map(x => personCard(p, x)).join("");
+    }
+    if (tab === "glossary") {
+      const list = (p.glossary || []).slice().sort((a, b) => a.t.localeCompare(b.t, "fr"));
+      h += `<input type="search" id="gl-search" placeholder="Chercher un terme" aria-label="Chercher dans le glossaire"><dl class="gloss" id="gl-list">` + list.map(g => `<div data-gt="${esc((g.t + " " + g.d).toLowerCase())}" id="gl-${esc(g.id)}"><dt>${esc(g.t)}</dt><dd>${esc(g.d)}${usedIn(p, g.id)}<div style="margin-top:6px">${flagBtn({ pack: p.id, kind: "glossaire", ref: g.id, label: g.t }, "Expliquer davantage")}</div></dd></div>`).join("") + `</dl>
+        <div class="row" style="margin-top:14px">${flagBtn({ pack: p.id, kind: "glossaire", ref: "nouveaux", label: "Nouveaux termes pour " + p.title }, "Proposer d’autres termes")}</div>`;
+    }
+    return h;
+  }
+  function tlEvent(p, e, i) {
+    const ppl = (e.people || []).map(id => p._pp[id]).filter(Boolean);
+    const linked = new Set(ppl.map(x => x.id));
+    return `<div class="ev${S().nav.hl === (e.id || i) ? " hl" : ""}" id="ev-${esc(e.id || i)}"><div class="y">${esc(e.y)}</div><div class="box"><h3>${esc(e.t)}</h3><p class="small" style="margin:0 0 10px">${rich(e.d, p.id, linked)}</p>
+      ${e.open ? `<div class="open small"><strong>En suspens.</strong> ${rich(e.open, p.id, linked)}</div>` : ""}
+      ${ppl.length ? `<div class="nlinks">${ppl.map(x => `<button class="chip person-chip" data-act="person" data-p="${esc(p.id)}" data-x="${esc(x.id)}">👤 ${esc(x.n)}</button>`).join("")}</div>` : ""}
+      <div class="nlinks">${(e.notions || []).map(nn => p._n[nn] ? `<button class="chip" data-act="notion" data-p="${esc(p.id)}" data-n="${esc(nn)}">${minis(p.id, nn)} ${esc(p._n[nn].title)}</button>` : "").join("")}</div>
+      <div style="margin-top:10px">${flagBtn({ pack: p.id, kind: "frise", ref: e.id || e.y, label: e.y + " : " + e.t })}</div></div></div>`;
+  }
+  function personCard(p, x, compact) {
+    return `<div class="card person"><div class="spread" style="align-items:flex-start"><div><h3 style="margin:0"><button class="pl" data-act="person" data-p="${esc(p.id)}" data-x="${esc(x.id)}">${esc(x.n)}</button></h3><div class="small muted">${esc(x.y || "")}</div></div>${x.lesson ? `<span class="tag lesson">Leçon</span>` : ""}</div>
+      <p style="margin:10px 0 12px">${rich(x.d || "", p.id, new Set([x.id]))}</p>
+      <div class="row wrap"><button class="btn small ${x.lesson ? "primary" : ""}" data-act="person" data-p="${esc(p.id)}" data-x="${esc(x.id)}">${x.lesson ? "Lire la leçon complète" : "Voir le portrait"}</button>${x.lesson ? "" : flagBtn({ pack: p.id, kind: "figure", ref: x.id, label: x.n }, "Demander une leçon complète")}</div></div>`;
+  }
+  function usedIn(p, gid) {
+    const re = new RegExp("\\{\\{" + gid.replace(/[-]/g, "\\-") + "(\\||\\}\\})");
+    const ns = p.notions.filter(n => levelsOf(n).some(l => re.test(n.levels[l].text)));
+    if (!ns.length) return "";
+    return `<div class="used">Voir : ${ns.map(n => `<button class="wl" data-act="notion" data-p="${esc(p.id)}" data-n="${esc(n.id)}">${esc(n.title)}</button>`).join(", ")}</div>`;
+  }
+  function resList(list) {
+    return `<div>` + list.map(r => `<div class="res"><span class="ic" aria-hidden="true">${I[r.type] || I.article}</span><div>
+      ${r.url ? `<a class="t" href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a>` : `<span class="t">${esc(r.title)}</span>`}${r.lang === "en" ? `<span class="tag en" title="Ressource en anglais">EN</span>` : ""}${r.level ? `<span class="tag lvl">${LEVELS[r.level]}</span>` : ""}
+      <div class="small muted">${esc(RES_LABEL[r.type] || "Ressource")}${r.author ? ", " + esc(r.author) : ""}</div>${r.note ? `<div class="small" style="margin-top:3px">${esc(r.note)}</div>` : ""}</div></div>`).join("") + `</div>`;
+  }
+
+  /* ---------- Fiche notion ---------- */
+  function vNotion() {
+    const p = PK[S().nav.pack]; const n = p && p._n[S().nav.notion]; if (!n) return vHome();
+    if (n.group) return vGroup(p, n);
+    const k = nkey(p.id, n.id);
+    const avail = levelsOf(n);
+    let lv = Math.max(1, Math.min(3, S().nav.level || P().levels[k] || 1));
+    const L = n.levels[lv];
+    const st = stampsOf(p.id, n.id);
+    const prev = p._seq[n._s - 1], next = p._seq[n._s + 1];
+    const crumb = n._par ? `${esc(p.emoji || "")} <button class="pl" data-act="notion" data-p="${esc(p.id)}" data-n="${esc(n._par.id)}" data-replace="1">${esc(n._par.title)}</button>, ${esc((n._par.childLabel || "notion").toLowerCase())} ${n._k + 1} sur ${n._par._kids.length}` : `${esc(p.emoji || "")} ${esc(p.title)}, notion ${n._s + 1} sur ${p._seq.length}`;
+    let h = `<div class="pn-top">${prev ? `<button class="btn small" data-act="notion" data-p="${esc(p.id)}" data-n="${esc(prev.id)}" data-replace="1" title="${esc(prev.title)}">‹ Précédente</button>` : "<span></span>"}${next ? `<button class="btn small" data-act="notion" data-p="${esc(p.id)}" data-n="${esc(next.id)}" data-replace="1" title="${esc(next.title)}">Suivante : ${esc(next.title.length > 26 ? next.title.slice(0, 25) + "…" : next.title)} ›</button>` : "<span></span>"}</div>
+      <div class="notion-head"><div><div class="crumb">${crumb}</div><h1>${esc(n.title)}</h1><p class="muted" style="margin:0">${esc(n.summary || "")}</p></div>
+      <div class="stamp-slot">${stampSVG(n.glyph || "?", n.id, topLevel(p.id, n.id), st)}</div></div>
+      <div class="levelbar lv${lv}"><div class="levelbar-in">
+        <button class="step" data-act="lvl" data-d="-1" ${lv <= 1 ? "disabled" : ""} aria-label="Niveau moins approfondi">−</button>
+        <div class="strata" aria-live="polite"><span class="bars" aria-hidden="true">${[1, 2, 3].map(l => `<i class="${l <= lv ? "f" + lv : ""}"></i>`).join("")}</span><span class="lab">${LEVELS[lv]}<small>${n.minutes ? "environ " + n.minutes[lv - 1] + " min" : ""}${st[lv] ? ", tampon obtenu" : ""}</small></span></div>
+        <button class="step" data-act="lvl" data-d="1" ${lv >= 3 ? "disabled" : ""} aria-label="Niveau plus approfondi">+</button>
+      </div></div><div class="lv${lv}"><div class="n-grid"><article class="n-main">`;
+    if (L && L.text) {
+      h += `<p class="adds"><b>${LEVELS[lv]}.</b> ${esc(L.adds || "")}</p><div class="reading">${md(L.text, p.id)}</div>`;
+      if (L.quiz && L.quiz.length) h += `<div class="test-cta"><div><strong>${st[lv] ? "Tampon " + LEVELS[lv] + " obtenu" : "Gagner le tampon " + LEVELS[lv]}</strong><div class="small muted">${L.quiz.length} questions, ${Math.ceil(L.quiz.length * 2 / 3)} bonnes réponses suffisent.</div></div><button class="btn lv" data-act="quiz" data-l="${lv}">${st[lv] ? "Refaire le test" : "Se tester"}</button></div>`;
+    } else {
+      h += `<div class="pending"><strong>Niveau ${LEVELS[lv]} en cours de rédaction.</strong><br>${avail.length ? `En attendant, le niveau ${LEVELS[avail[avail.length - 1]]} est disponible.` : ""}<div style="margin-top:12px">${flagBtn({ pack: p.id, kind: "niveau", ref: n.id + "/" + lv, label: n.title + ", niveau " + LEVELS[lv] }, "Demander ce niveau")}</div></div>`;
+    }
+    if (n._kids.length) h += `<h2>${esc(n.childrenLabel || "Sous-notions")}</h2><div class="kids">${n._kids.map(c => `<button class="item sub" data-act="notion" data-p="${esc(p.id)}" data-n="${esc(c.id)}"><span class="stamp-slot" style="width:40px;height:40px">${stampSVG(c.glyph || "?", c.id, topLevel(p.id, c.id), stampsOf(p.id, c.id))}</span><span><h3>${esc(c.title)}</h3><div class="sum">${esc(c.summary || "")}</div></span>${minis(p.id, c.id)}</button>`).join("")}</div>`;
+    const tl = (p.timeline || []).filter(e => (e.notions || []).includes(n.id));
+    const pre = (n.prereq || []).filter(x => p._n[x]); const nxt = (n.next || []).filter(x => p._n[x]);
+    let side = "";
+    { let h = "";
+    if (pre.length || nxt.length) {
+      h += `<h2>Liens</h2>`;
+      if (pre.length) h += `<p class="small muted" style="margin-bottom:6px">Pour bien comprendre, voir d’abord</p><div class="chips" style="margin-bottom:12px">${pre.map(x => `<button class="chip" data-act="notion" data-p="${esc(p.id)}" data-n="${esc(x)}">${minis(p.id, x)} ${esc(p._n[x].title)}</button>`).join("")}</div>`;
+      if (nxt.length) h += `<p class="small muted" style="margin-bottom:6px">Cette notion ouvre sur</p><div class="chips">${nxt.map(x => `<button class="chip" data-act="notion" data-p="${esc(p.id)}" data-n="${esc(x)}">${minis(p.id, x)} ${esc(p._n[x].title)}</button>`).join("")}</div>`;
+    }
+    if (tl.length) h += `<h2>Sur la frise</h2><div class="chips">${tl.map(e => `<button class="chip" data-act="tl" data-i="${esc(e.id)}"><span class="y">${esc(e.y)}</span> ${esc(e.t)}</button>`).join("")}</div>`;
+    side = h; }
+    if (n.misconceptions && n.misconceptions.length) h += `<h2>Idées reçues</h2><ul class="section-list">${n.misconceptions.map((m, i) => `<li><div class="myth">${esc(m.myth)}</div><p style="margin:6px 0 8px">${rich(m.truth, p.id)}</p>${flagBtn({ pack: p.id, kind: "idee", ref: n.id + "/" + i, label: m.myth })}</li>`).join("")}</ul>`;
+    if (n.debates && n.debates.length) h += `<h2>Débats ouverts et inconnues</h2><ul class="section-list">${n.debates.map((d, i) => typeof d === "string" ? `<li>${esc(d)}</li>` : `<li><strong>${esc(d.t)}</strong><p style="margin:6px 0 8px">${rich(d.d, p.id)}</p>${flagBtn({ pack: p.id, kind: "debat", ref: n.id + "/" + i, label: d.t })}</li>`).join("")}</ul>`;
+    const figs = (n.figures || []).map(f => typeof f === "string" ? p._pp[f] : f).filter(Boolean);
+    if (figs.length) h += `<h2>Grandes figures</h2>` + figs.map(x => x.id ? personCard(p, x) : `<div class="card person"><h3 style="margin:0">${esc(x.n)}</h3><div class="small muted">${esc(x.y || "")}</div><p style="margin:8px 0 0">${esc(x.d)}</p></div>`).join("");
+    h += `<h2>Pour aller plus loin</h2>` + (n.resources && n.resources.length ? resList(n.resources) : `<p class="muted small">Les ressources de cette notion arriveront avec ses niveaux Intermédiaire et Expert.</p>`);
+    h += `<h2>Mes notes</h2><p class="small muted">Une seule fiche de notes pour les trois niveaux. Tes questions et remarques peuvent être jointes à l’export « À développer » : elles serviront à enrichir la fiche.</p><textarea data-note="${esc(k)}" placeholder="Ce que je retiens, mes questions, des liens avec d’autres sujets…">${esc(P().notes[k] || "")}</textarea>`;
+    h += `<div class="card" style="margin-top:18px"><strong>Il manque quelque chose sur cette fiche ?</strong><p class="small muted" style="margin:4px 0 10px">Marque-la : la demande rejoindra la liste « À développer » des réglages, avec ta précision éventuelle.</p>${flagBtn({ pack: p.id, kind: "notion", ref: n.id, label: n.title }, "Approfondir cette fiche")}</div>`;
+    h += `</article>${side ? `<aside class="n-side">${side}</aside>` : ""}</div>`;
+    h += `<div class="pn">${prev ? `<button data-act="notion" data-p="${esc(p.id)}" data-n="${esc(prev.id)}" data-replace="1"><small>Précédente</small>${esc(prev.title)}</button>` : "<span></span>"}${next ? `<button class="next" data-act="notion" data-p="${esc(p.id)}" data-n="${esc(next.id)}" data-replace="1"><small>Suivante</small>${esc(next.title)}</button>` : "<span></span>"}</div></div>`;
+    return h;
+  }
+
+  function vPerson() {
+    const p = PK[S().nav.pack]; const x = p && p._pp[S().nav.person]; if (!x) return vHome();
+    const ns = p.notions.filter(n => (n.figures || []).includes(x.id));
+    const evs = (p.timeline || []).filter(e => (e.people || []).includes(x.id) || String(e.d).includes("@" + x.id));
+    const self = new Set([x.id]);
+    let h = `<div class="crumb small muted">${esc(p.emoji || "")} ${esc(p.title)}, grande figure</div><h1>${esc(x.n)}</h1><div class="muted">${esc(x.y || "")}</div>
+      <p class="lead" style="margin-top:14px">${rich(x.d || "", p.id, self)}</p>`;
+    h += x.lesson ? `<div class="reading">${md(x.lesson, p.id, self)}</div>` : `<div class="pending">La leçon complète n’est pas encore rédigée.<div style="margin-top:12px">${flagBtn({ pack: p.id, kind: "figure", ref: x.id, label: x.n }, "Demander une leçon complète")}</div></div>`;
+    if (evs.length) h += `<h2>Sur la frise</h2><div class="chips">${evs.map(e => `<button class="chip" data-act="tl" data-i="${esc(e.id)}"><span class="y">${esc(e.y)}</span> ${esc(e.t)}</button>`).join("")}</div>`;
+    if (ns.length) h += `<h2>Dans le parcours</h2><div class="chips">${ns.map(n => `<button class="chip" data-act="notion" data-p="${esc(p.id)}" data-n="${esc(n.id)}">${minis(p.id, n.id)} ${esc(n.title)}</button>`).join("")}</div>`;
+    h += `<h2>Pour aller plus loin</h2>` + (x.resources && x.resources.length ? resList(x.resources) : `<p class="small muted">Pas encore de ressource sur ce portrait.</p>`);
+    if (x.lesson) h += `<div style="margin-top:18px">${flagBtn({ pack: p.id, kind: "figure", ref: x.id + "/plus", label: x.n + " (approfondir)" }, "Approfondir encore")}</div>`;
+    return h;
+  }
+
+  /* ---------- Recherche ---------- */
+  const norm = t => String(t || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const plain = t => String(t || "").replace(/\[\[[^\]|]+\|([^\]]+)\]\]/g, "$1").replace(/\[\[@?([^\]]+)\]\]/g, "$1").replace(/\{\{[^}|]+\|([^}]+)\}\}/g, "$1").replace(/\{\{([^}]+)\}\}/g, "$1").replace(/::figure \w+/g, "").replace(/^##? |^> /gm, "").replace(/\*\*/g, "");
+  let INDEX = null;
+  function buildIndex() {
+    INDEX = [];
+    T.PACKS.forEach(p => {
+      p.notions.forEach(n => { const lv = levelsOf(n); const texts = lv.map(l => plain(n.levels[l].text)); INDEX.push({ type: "Notion", p, label: n.title, sub: n.summary, nav: { view: "notion", pack: p.id, notion: n.id }, title: norm(n.title), body: texts.map(norm), raw: texts, levels: lv }); });
+      (p.people || []).forEach(x => { const t = plain(x.d) + " " + plain(x.lesson); INDEX.push({ type: "Figure", p, label: x.n, sub: x.y, nav: { view: "person", pack: p.id, person: x.id }, title: norm(x.n + " " + (x.aliases || []).join(" ")), body: [norm(t)], raw: [t] }); });
+      (p.timeline || []).forEach(e => { const t = plain(e.d) + " " + plain(e.open); INDEX.push({ type: "Jalon", p, label: e.y + " : " + e.t, sub: "", nav: { view: "pack", pack: p.id, tab: "timeline", hl: e.id }, title: norm(e.t + " " + e.y), body: [norm(t)], raw: [t] }); });
+      (p.glossary || []).forEach(g => INDEX.push({ type: "Terme", p, label: g.t, sub: "", gloss: g.id, nav: { view: "pack", pack: p.id, tab: "glossary" }, title: norm(g.t), body: [norm(g.d)], raw: [g.d] }));
+    });
+  }
+  function searchResults(q) {
+    if (!INDEX) buildIndex();
+    const toks = norm(q).split(/\s+/).filter(t => t.length > 1);
+    if (!toks.length) return [];
+    const out = [];
+    INDEX.forEach(e => {
+      const all = e.title + " " + e.body.join(" ");
+      if (!toks.every(t => all.includes(t))) return;
+      const score = toks.filter(t => e.title.includes(t)).length * 10 + ({ Notion: 3, Figure: 2, Terme: 2, Jalon: 1 }[e.type] || 0);
+      let snip = "", lvl = null;
+      for (let i = 0; i < e.body.length; i++) { const k = e.body[i].indexOf(toks[0]); if (k >= 0) { const r = e.raw[i]; snip = (k > 60 ? "…" : "") + r.slice(Math.max(0, k - 60), k + 120).replace(/\s+/g, " ") + "…"; lvl = e.levels ? e.levels[i] : null; break; } }
+      out.push({ e, score, snip, lvl });
+    });
+    return out.sort((a, b) => b.score - a.score).slice(0, 60);
+  }
+  function resultsHTML(q) {
+    if (!q.trim()) return `<p class="muted">Cherche une notion, une personne, un terme ou un événement dans tous les sujets installés.</p>`;
+    const res = searchResults(q);
+    if (!res.length) return `<div class="empty">Rien trouvé pour « ${esc(q)} ».<div style="margin-top:12px">${flagBtn({ pack: "_libre", kind: "autre", ref: "recherche:" + norm(q), label: "Sujet recherché sans résultat : " + q }, "Demander ce sujet")}</div></div>`;
+    return `<p class="small muted">${res.length} résultat${res.length > 1 ? "s" : ""}</p>` + res.map((r, i) => `<button class="card result" data-act="search-go" data-i="${i}"><span class="small muted">${esc(r.e.p.emoji || "")} ${esc(r.e.type)}${r.lvl ? ", " + LEVELS[r.lvl] : ""}</span><strong>${esc(r.e.label)}</strong>${r.snip ? `<span class="small">${esc(r.snip)}</span>` : (r.e.sub ? `<span class="small muted">${esc(r.e.sub)}</span>` : "")}</button>`).join("");
+  }
+  let lastResults = [];
+  function vSearch() {
+    const q = S().nav.q || "";
+    lastResults = searchResults(q);
+    return `<h1>Rechercher</h1><input type="search" id="search-q" value="${esc(q)}" placeholder="Lemaître, parallaxe, samouraï, 1868…" aria-label="Rechercher" autocomplete="off"><div id="search-res" style="margin-top:14px">${resultsHTML(q)}</div>`;
+  }
+
+  /* ---------- Tests ---------- */
+  function vQuiz() {
+    if (!Q) return vHome();
+    const it = Q.items[Q.i];
+    if (!it) return vQuizEnd();
+    const p = PK[it.p], n = p._n[it.n], q = n.levels[it.l].quiz[it.qi];
+    const answered = Q.picked != null;
+    let h = `<div class="lv${it.l}"><div class="review-src">${Q.mode === "review" ? `${esc(p.emoji || "")} ${esc(p.title)}, ${esc(n.title)}, niveau ${LEVELS[it.l]}` : `${esc(n.title)}, test ${LEVELS[it.l]}`}</div>
+      <div class="quiz-prog" aria-hidden="true">${Q.items.map((_, i) => `<i class="${i < Q.i ? (Q.res[i] ? "ok" : "ko") : i === Q.i ? "cur" : ""}"></i>`).join("")}</div>
+      <p class="qtext">${esc(q.q)}</p><div class="opts">`;
+    Q.order.forEach(oi => { let cls = ""; if (answered) { if (oi === q.a) cls = "good"; else if (oi === Q.picked) cls = "wrong"; } h += `<button class="opt ${cls}" data-act="pick" data-o="${oi}" ${answered ? "disabled" : ""}>${esc(q.o[oi])}</button>`; });
+    h += `</div>`;
+    if (answered) {
+      const ok = Q.picked === q.a;
+      h += `<div class="explain${ok ? "" : " ko"}" role="status"><strong>${ok ? "Exact." : "Pas tout à fait."}</strong> ${esc(q.e || "")}</div>
+        <div class="row" style="margin-top:16px;justify-content:flex-end"><button class="btn lv" data-act="next-q">${Q.i + 1 < Q.items.length ? "Question suivante" : "Voir le résultat"}</button></div>`;
+    }
+    return h + `</div>`;
+  }
+  function vQuizEnd() {
+    const good = Q.res.filter(Boolean).length, tot = Q.items.length;
+    if (Q.mode === "review") return `<div class="result"><div class="score">${good} / ${tot}</div><p class="lead" style="margin:10px auto">${good === tot ? "Parfait, tout est bien ancré." : "Les notions manquées reviendront dès demain."}</p><button class="btn primary" data-act="home">Retour à l’accueil</button></div>`;
+    const it = Q.items[0]; const p = PK[it.p], n = p._n[it.n];
+    const pass = good >= Math.ceil(tot * 2 / 3); const st = stampsOf(p.id, n.id);
+    return `<div class="result lv${it.l}">${pass ? `<div class="stamp-slot">${stampSVG(n.glyph, n.id, Math.max(it.l, topLevel(p.id, n.id)), st)}</div>` : ""}
+      <div class="score">${good} / ${tot}</div>
+      <p class="lead" style="margin:12px auto;max-width:34ch">${pass ? `Tampon ${LEVELS[it.l]} ${Q.newStamp ? "obtenu" : "confirmé"} pour « ${esc(n.title)} ».${Q.newStamp ? " Cette notion reviendra dans tes révisions." : ""}` : "Pas encore. Relis la fiche, puis retente ta chance."}</p>
+      <div class="row wrap" style="justify-content:center">${pass && it.l < 3 && n.levels[it.l + 1] && n.levels[it.l + 1].text ? `<button class="btn lv${it.l + 1} lv" data-act="after-quiz" data-l="${it.l + 1}">Passer au niveau ${LEVELS[it.l + 1]}</button>` : ""}<button class="btn" data-act="after-quiz" data-l="${it.l}">Retour à la fiche</button>${p._seq[n._s + 1] ? `<button class="btn" data-act="next-notion">Notion suivante ›</button>` : ""}</div></div>`;
+  }
+  function startQuiz(pid, nid, l) {
+    const qs = PK[pid]._n[nid].levels[l].quiz;
+    Q = { mode: "level", items: qs.map((_, qi) => ({ p: pid, n: nid, l, qi })), i: 0, res: [], picked: null, order: shuffle(qs[0].o.map((_, i) => i)) };
+    go({ view: "quiz", pack: pid, notion: nid });
+  }
+  function startReview() {
+    const due = shuffle(dueItems()).slice(0, 12);
+    if (!due.length) { toast("Rien à revoir aujourd’hui."); return; }
+    Q = { mode: "review", items: due.map(d => ({ p: d.p, n: d.n, l: d.l, k: d.k, qi: Math.floor(Math.random() * PK[d.p]._n[d.n].levels[d.l].quiz.length) })), i: 0, res: [], picked: null };
+    const f = Q.items[0]; Q.order = shuffle(PK[f.p]._n[f.n].levels[f.l].quiz[f.qi].o.map((_, i) => i));
+    go({ view: "quiz", pack: f.p });
+  }
+  function finishQuiz() {
+    if (Q.mode === "review") {
+      Q.items.forEach((it, i) => { const s = P().srs[it.k]; if (!s) return; if (Q.res[i]) { s.box = Math.min(INTERVALS.length - 1, (s.box || 0) + 1); s.due = addDays(today(), INTERVALS[s.box]); } else { s.box = 0; s.due = addDays(today(), 1); } });
+    } else {
+      const it = Q.items[0]; const good = Q.res.filter(Boolean).length;
+      if (good >= Math.ceil(Q.items.length * 2 / 3)) {
+        const k = nkey(it.p, it.n); const st = P().stamps[k] || (P().stamps[k] = {});
+        Q.newStamp = !st[it.l];
+        if (Q.newStamp) { st[it.l] = today(); P().srs[k + "/" + it.l] = { box: 0, due: addDays(today(), INTERVALS[0]) }; }
+      }
+    }
+    save();
+  }
+
+  /* ---------- Découverte ---------- */
+  function seeded(seed) { let a = 0; for (let i = 0; i < seed.length; i++) a = (a * 31 + seed.charCodeAt(i)) | 0; return () => { a |= 0; a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+  function pick(list, n, rnd) { const b = list.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b.slice(0, n); }
+  function vDiscover() {
+    const s = S(); const all = [];
+    T.PACKS.forEach(p => (p._real || []).forEach(n => { const lv = levelsOf(n); if (lv.length) all.push({ p, n, lv, st: stampsOf(p.id, n.id) }); }));
+    const rnd = seeded(today() + "|" + (s.settings.discoverSeed || 0) + "|" + s.current);
+    const sections = [
+      { k: "explore", lv: 1, ic: "🧭", t: "À explorer", d: "Des notions où tu n’as encore aucun tampon.", go: "Commencer en Découverte", f: x => !x.st[1] && !x.st[2] && !x.st[3] && x.lv.includes(1) },
+      { k: "dig", lv: 2, ic: "⛏️", t: "À creuser", d: "Tu as le tampon Découverte : place au niveau Intermédiaire.", go: "Passer en Intermédiaire", f: x => x.st[1] && !x.st[2] && x.lv.includes(2) },
+      { k: "master", lv: 3, ic: "🎯", t: "À perfectionner", d: "Découverte et Intermédiaire validés : il ne manque plus que l’Expert.", go: "Viser le niveau Expert", f: x => x.st[1] && x.st[2] && !x.st[3] && x.lv.includes(3) }
+    ];
+    let h = `<h1>Découverte</h1><p class="lead">Quelques suggestions tirées au hasard dans tous tes sujets, selon ce que tu as déjà validé. Elles changent chaque jour, ou quand tu le demandes.</p>
+      <div class="row" style="margin-bottom:18px"><button class="btn small" data-act="reshuffle">🎲 Autres suggestions</button></div>`;
+    sections.forEach(sec => {
+      const cand = all.filter(sec.f); const chosen = pick(cand, 3, rnd);
+      h += `<section class="disc-sec lv${sec.lv}"><h2><span class="d-ic" aria-hidden="true">${sec.ic}</span>${sec.t}</h2><p class="small muted" style="margin:0 0 10px">${sec.d}${cand.length ? ` ${cand.length} notion${cand.length > 1 ? "s" : ""} concernée${cand.length > 1 ? "s" : ""}.` : ""}</p>`;
+      if (!chosen.length) h += `<div class="card small muted">${sec.k === "explore" ? "Bravo, tu as au moins un tampon partout !" : sec.k === "dig" ? "Aucune notion en attente ici : gagne d’abord des tampons Découverte." : "Aucune notion en attente ici : valide d’abord des niveaux Intermédiaire."}</div>`;
+      chosen.forEach(({ p, n }) => {
+        h += `<button class="card disc-card" data-act="disc-go" data-p="${esc(p.id)}" data-n="${esc(n.id)}" data-l="${sec.lv}"><span class="stamp-slot" style="width:48px;height:48px">${stampSVG(n.glyph || "?", n.id, topLevel(p.id, n.id), stampsOf(p.id, n.id))}</span>
+          <span><span class="small muted">${esc(p.emoji || "")} ${esc(p.short || p.title)}${n._par ? " › " + esc(n._par.title) : ""}</span><h3>${esc(n.title)}</h3><span class="sum">${esc(n.summary || "")}</span><span class="go">${sec.go} ›</span></span>${minis(p.id, n.id)}</button>`;
+      });
+      h += `</section>`;
+    });
+    return h;
+  }
+
+  /* ---------- Révisions ---------- */
+  function vReview() {
+    const due = dueItems(); const all = Object.keys(P().srs).length;
+    let h = `<h1>Révisions</h1><p class="lead">Chaque tampon gagné fait revenir la notion ici après 2 jours, puis 1 semaine, 3 semaines, 2 mois et 5 mois si tu réponds juste. Une erreur la fait revenir dès le lendemain.</p>`;
+    h += `<div class="card review-card"><span class="big">${due.length}</span><div><strong>${due.length ? "Questions à revoir aujourd’hui" : "Rien à revoir pour l’instant"}</strong><div class="small muted">${all} notion(s) et niveau(x) dans le cycle de révision.</div></div>${due.length ? `<button class="btn primary" data-act="start-review">Commencer</button>` : ""}</div>`;
+    const up = Object.entries(P().srs).sort((a, b) => a[1].due.localeCompare(b[1].due)).slice(0, 12);
+    if (up.length) h += `<h2>Prochaines échéances</h2><ul class="section-list">` + up.map(([k, v]) => { const [pp, nn, l] = k.split("/"); const n = PK[pp] && PK[pp]._n[nn]; if (!n) return ""; return `<li class="spread"><span><button class="wl" data-act="notion" data-p="${esc(pp)}" data-n="${esc(nn)}">${esc(n.title)}</button> <span class="small muted">${LEVELS[l]}</span></span><span class="small">${v.due <= today() ? "aujourd’hui" : esc(v.due.split("-").reverse().slice(0, 2).join("/"))}</span></li>`; }).join("") + `</ul>`;
+    return h;
+  }
+
+  /* ---------- Demandes d’ajout ---------- */
+  function vRequests() {
+    const s = S(); const R = s.requests;
+    let h = `<h1>À développer</h1><p class="lead">Tout ce que tu as marqué « à développer », regroupé par domaine. Ajoute une précision si besoin, puis exporte la liste : envoie le fichier à Claude, qui en tirera un module à importer.</p>`;
+    const groups = {};
+    R.forEach(r => { (groups[r.pack] = groups[r.pack] || []).push(r); });
+    if (!R.length) h += `<div class="empty">Aucune demande pour l’instant. Les boutons « ✎ À développer » apparaissent sur les fiches, la frise, les figures, les idées reçues, les débats et le glossaire.</div>`;
+    Object.entries(groups).forEach(([pid, list]) => {
+      const di = domainInfo(pid);
+      h += `<h2>${esc(di.emoji)} ${esc(list[0].packTitle || di.title)} <span class="small muted" style="font-family:var(--f-ui);font-weight:400">${list.length}</span></h2>`;
+      list.forEach(r => {
+        h += `<div class="card req"><div class="spread" style="align-items:flex-start"><div><span class="tag lvl">${esc(KINDS[r.kind] || r.kind)}</span><div style="margin-top:6px;font-weight:700">${esc(r.label || r.ref)}</div></div><button class="btn small" data-act="del-req" data-k="${esc(r.key)}" aria-label="Retirer cette demande">Retirer</button></div>
+          <input type="text" data-reqnote="${esc(r.key)}" value="${esc(r.note || "")}" placeholder="Précision (facultatif) : ce qui te manque, une question…" aria-label="Précision" style="margin-top:10px"></div>`;
+      });
+    });
+    const opts = T.PACKS.map(p => `<option value="${esc(p.id)}">${esc(p.emoji || "")} ${esc(p.title)}</option>`).join("") + Object.entries(T.DOMAINS).filter(([id]) => !PK[id]).map(([id, d]) => `<option value="${esc(id)}">${esc(d.emoji)} ${esc(d.title)} (à venir)</option>`).join("") + `<option value="_new">Nouveau domaine…</option>`;
+    h += `<h2>Ajouter une demande</h2><div class="card"><label class="field"><span>Domaine</span><select id="rq-pack">${opts}</select></label>
+      <label class="field" id="rq-newwrap" hidden><span>Nom du nouveau domaine</span><input type="text" id="rq-new" placeholder="Par exemple : la musique, l’histoire de l’art…"></label>
+      <label class="field"><span>Type</span><select id="rq-kind">${Object.entries(KINDS).map(([k, l]) => `<option value="${k}">${esc(l)}</option>`).join("")}</select></label>
+      <label class="field"><span>Quoi ?</span><input type="text" id="rq-label" placeholder="Par exemple : les étoiles à neutrons, Vera Rubin, le paradoxe de Fermi…"></label>
+      <label class="field"><span>Précision (facultatif)</span><input type="text" id="rq-note"></label>
+      <button class="btn primary" data-act="add-req">Ajouter à la liste</button></div>`;
+    const sendNotes = s.settings.sendNotes !== false; const nn = notesToSend(!!s.settings.notesAll);
+    h += `<h2>Tes notes</h2><div class="card"><p class="small" style="margin-top:0">Les notes écrites sur les fiches (« et si je tombais dans une planète gazeuse ? ») peuvent accompagner l’export : Claude y répondra en complétant les fiches concernées.</p>
+      <label class="check-row"><input type="checkbox" data-act="opt" data-k="sendNotes" ${sendNotes ? "checked" : ""}> Joindre mes notes</label>
+      <label class="check-row"><input type="checkbox" data-act="opt" data-k="notesAll" ${s.settings.notesAll ? "checked" : ""} ${sendNotes ? "" : "disabled"}> Inclure aussi les notes déjà envoyées</label>
+      ${sendNotes ? (nn.length ? `<ul class="section-list small" style="margin-top:8px">${nn.map(x => `<li><strong>${esc(x.title)}</strong> <span class="muted">(${esc(x.domainTitle)})</span><div class="muted note-prev">${esc(x.note.slice(0, 140))}${x.note.length > 140 ? "…" : ""}</div></li>`).join("")}</ul>` : `<p class="small muted" style="margin:8px 0 0">Aucune note nouvelle ou modifiée depuis le dernier export.</p>`) : ""}</div>`;
+    const any = R.length || (sendNotes && nn.length);
+    h += `<h2>Exporter</h2><div class="card"><p class="small">L’export crée un fichier qui décrit tes demandes, tes notes et les modules installés, puis vide la liste des demandes (tes notes restent, bien sûr). Envoie ce fichier à Claude : il te renverra un module d’extension à importer dans « Modules ».</p>
+      <div class="row wrap"><button class="btn primary" data-act="export-req" ${any ? "" : "disabled"}>Exporter et vider la liste</button><button class="btn" data-act="copy-req" ${any ? "" : "disabled"}>Copier le texte</button></div></div>`;
+    return h;
+  }
+  const noteHash = t => { let h = 0; for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) | 0; return String(h); };
+  function notesToSend(all) {
+    const sent = S().notesSent || {}; const out = [];
+    for (const [k, txt] of Object.entries(P().notes)) {
+      if (!txt || !txt.trim()) continue;
+      const [pp, nn] = k.split("/"); const pk = PK[pp]; const n = pk && pk._n[nn];
+      const fresh = sent[S().current + ":" + k] !== noteHash(txt);
+      if (all || fresh) out.push({ k, domain: pp, domainTitle: pk ? pk.title : pp, notion: nn, title: n ? n.title : nn, levelRead: LEVELS[P().levels[k] || 1], levelsAvailable: n ? levelsOf(n).map(l => LEVELS[l]) : [], note: txt, alreadySent: !fresh });
+    }
+    return out;
+  }
+  function requestFile() {
+    return {
+      app: "tartiflette", type: "demandes", version: 1, exported: new Date().toISOString(),
+      instructions: "Liste de demandes d’ajout de contenu pour l’appli Tartiflette (voir aussi le champ notes). Produire en retour un module JSON de type « extension » (ou un domaine complet pour un nouveau sujet), au format décrit dans MODULES.md : identifiants stables, ajouts par fusion sans effacer l’existant, textes en français, ressources vérifiées avec l’étiquette lang \"en\" pour l’anglais.",
+      installed: T.PACKS.map(p => ({ id: p.id, title: p.title, version: p.version || 1, knowledge: p.knowledge, extensions: p._exts.map(e => ({ id: e.id, version: e.version || 1 })), notions: p.notions.map(n => ({ id: n.id, title: n.title, levels: levelsOf(n) })), people: (p.people || []).map(x => ({ id: x.id, n: x.n, lesson: !!x.lesson })) })),
+      requests: S().requests.map(r => ({ domain: r.pack, domainTitle: r.packTitle, kind: r.kind, kindLabel: KINDS[r.kind], ref: r.ref, label: r.label, note: r.note || "", created: r.created })),
+      notes: S().settings.sendNotes === false ? [] : notesToSend(!!S().settings.notesAll).map(x => { const y = Object.assign({}, x); delete y.k; return y; }),
+      notesInstructions: "Les notes sont celles que l’utilisateur a écrites sur les fiches : questions, remarques, points à éclaircir. Y répondre en complétant ou en adaptant le texte de la fiche concernée, au niveau indiqué (levelRead), dans le ton de ce niveau."
+    };
+  }
+  function markSent() {
+    if (S().settings.sendNotes === false) return;
+    const sent = S().notesSent = S().notesSent || {};
+    notesToSend(true).forEach(x => { sent[S().current + ":" + x.k] = noteHash(x.note); });
+  }
+  function download(obj, name) {
+    const blob = new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" });
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  }
+
+  /* ---------- Modules ---------- */
+  function vModules() {
+    let h = `<h1>Modules</h1><p class="lead">Un domaine (l’Espace, la Philosophie…) est un module de base. Une extension ajoute ou complète des contenus d’un domaine existant : nouvelles notions, niveaux, figures, jalons, questions. Un module de thèmes ajoute des palettes de couleurs. Installer ou mettre à jour un module ne touche jamais à ta progression.</p>`;
+    T.PACKS.forEach(p => {
+      h += `<div class="card"><div class="spread"><div><strong>${esc(p.emoji || "")} ${esc(p.title)}</strong><div class="small muted">Version ${esc(p.version || 1)}, ${p._real.length} notions, état des connaissances ${esc(p.knowledge || "")}, source : ${esc(p._source || "")}</div></div>${p._source === "importé" ? `<button class="btn small danger" data-act="del-mod" data-k="p" data-id="${esc(p.id)}">Retirer</button>` : ""}</div>`;
+      if (p._exts.length) h += `<ul class="section-list" style="margin-top:8px">${p._exts.map(e => `<li class="spread"><span><strong>${esc(e.title || e.id)}</strong><span class="small muted"> version ${esc(e.version || 1)}${e._importedAt ? ", importée le " + esc(e._importedAt.split("-").reverse().join("/")) : ""}, ${esc(e._source || "")}</span>${e.description ? `<div class="small">${esc(e.description)}</div>` : ""}</span>${e._source === "importé" ? `<button class="btn small danger" data-act="del-mod" data-k="x" data-id="${esc(e.id)}">Retirer</button>` : ""}</li>`).join("")}</ul>`;
+      else h += `<p class="small muted" style="margin:8px 0 0">Aucune extension.</p>`;
+      h += `</div>`;
+    });
+    const tm = Object.values(T.RAW.themes);
+    if (tm.length) h += `<h2>Thèmes</h2>` + tm.map(m => `<div class="card"><div class="spread"><div><strong>${esc(m.emoji || "🎨")} ${esc(m.title)}</strong><div class="small muted">Version ${esc(m.version || 1)}, ${m.themes.length} thème${m.themes.length > 1 ? "s" : ""}, source : ${esc(m._source || "")}</div>${m.description ? `<div class="small">${esc(m.description)}</div>` : ""}</div>${m._source === "importé" ? `<button class="btn small danger" data-act="del-mod" data-k="t" data-id="${esc(m.id)}">Retirer</button>` : ""}</div></div>`).join("");
+    const orphans = Object.values(T.RAW.exts).filter(e => !PK[e.target]);
+    if (orphans.length) h += `<h2>En attente</h2><p class="small muted">Extensions dont le domaine n’est pas installé.</p>` + orphans.map(e => `<div class="card small">${esc(e.title || e.id)} (pour « ${esc(e.target)} »)</div>`).join("");
+    h += `<h2>Importer</h2><div class="card"><p class="small">Choisis un fichier .json reçu : l’appli reconnaît seule s’il s’agit d’un nouveau domaine, d’une mise à jour, d’une extension ou de thèmes. Si une version plus récente est déjà installée, elle est conservée.</p><label class="btn primary">Importer un module<input type="file" accept=".json,application/json" id="mod-file" hidden></label></div>`;
+    return h;
+  }
+
+  /* ---------- Réglages ---------- */
+  function vSettings() {
+    const s = S();
+    let h = `<h1>Réglages</h1>`;
+    h += `<div class="settings-links"><button class="card link-card" data-act="view" data-v="requests"><span class="emoji" aria-hidden="true">✎</span><span><strong>À développer</strong><span class="small muted">${s.requests.length} demande${s.requests.length > 1 ? "s" : ""} en attente</span></span></button>
+      <button class="card link-card" data-act="view" data-v="modules"><span class="emoji" aria-hidden="true">🧩</span><span><strong>Modules</strong><span class="small muted">${T.PACKS.length} domaine${T.PACKS.length > 1 ? "s" : ""}, ${Object.keys(T.RAW.exts).length} extension${Object.keys(T.RAW.exts).length > 1 ? "s" : ""}, ${Object.keys(T.RAW.themes).length} thème${Object.keys(T.RAW.themes).length > 1 ? "s" : ""}</span></span></button></div>`;
+    const chip = t => {
+      const light = THEMES.find(x => x.id === "light").vars, dark = THEMES.find(x => x.id === "dark").vars;
+      let v = t.vars, bg, extra = "";
+      if (t.id === "auto") { v = light; bg = `linear-gradient(135deg, ${light.paper} 0 80%, ${dark.paper} 80% 100%)`; }
+      else if (t.id === "saison") { const st = T.findTheme(T.seasonTheme()); v = (st && st.vars) || light; bg = v.paper; extra = st && st.id !== "auto" ? ` En ce moment : <b style="color:${esc(v.l2)}">${esc(st.name)}</b>.` : ""; }
+      else { v = v || light; bg = v.paper; }
+      const on = s.settings.theme === t.id;
+      const desc = esc(t.desc || t.note || "").replace(/\*([^*]+)\*/g, (m, w) => `<b style="color:${esc(v.l2)}">${w}</b>`);
+      return `<button class="theme-chip" data-act="theme" data-k="${esc(t.id)}" aria-pressed="${on}" style="background:${bg};color:${esc(v.ink)};border-color:${esc(on ? v.ink : v.line)}${on ? `;box-shadow:inset 0 0 0 1px ${esc(v.ink)}` : ""}">
+        <span class="tc-emoji" aria-hidden="true" style="background:${esc(v.surface)};border-color:${esc(v.line)}">${t.emoji || "🎨"}</span>
+        <span class="tc-text"><span class="tc-name">${esc(t.name)}${on ? ` <span aria-hidden="true" style="color:${esc(v.l1)}">✓</span>` : ""}</span><small style="color:${esc(v.muted)}">${desc}${extra}</small></span></button>`;
+    };
+    const cur = T.findTheme(T.resolvedTheme());
+    h += `<h2 id="themes">Thème ${cur ? `<span aria-hidden="true">${cur.emoji}</span>` : ""}</h2><div class="themes">${THEMES.map(chip).join("")}</div>`;
+    if (s.settings.theme === "saison") { const st = T.findTheme(T.seasonTheme()); h += `<p class="small muted">En ce moment : ${st ? st.emoji + " " + esc(st.name) : "automatique (aucun thème de saison installé)"}.</p>`; }
+    Object.values(T.RAW.themes).sort((a, b) => a.title.localeCompare(b.title, "fr")).forEach(m => { h += `<h3>${esc(m.emoji || "")} ${esc(m.title)}</h3><div class="themes">${m.themes.map(chip).join("")}</div>`; });
+    h += `<p class="small muted">D’autres palettes s’ajoutent comme des modules, depuis l’écran Modules.</p>`;
+    h += `<h2>Taille du texte</h2><div class="row"><button class="btn small" data-act="scale" data-d="-0.1" aria-label="Réduire">A−</button><button class="btn small" data-act="scale" data-d="0.1" aria-label="Agrandir">A+</button></div>`;
+    h += `<h2>Profils</h2><p class="small muted">Chaque profil a ses propres tampons, révisions et notes.</p><div class="card">`;
+    s.profiles.forEach(pr => { h += `<div class="profile-row"><input type="radio" name="prof" data-act="use-profile" data-id="${esc(pr.id)}" ${pr.id === s.current ? "checked" : ""} aria-label="Utiliser ${esc(pr.name)}"><input type="text" value="${esc(pr.name)}" data-pname="${esc(pr.id)}" aria-label="Nom du profil">${s.profiles.length > 1 ? `<button class="btn small danger" data-act="del-profile" data-id="${esc(pr.id)}">Supprimer</button>` : "<span></span>"}</div>`; });
+    h += `<div class="row" style="margin-top:12px"><button class="btn small" data-act="add-profile">Ajouter un profil</button></div></div>`;
+    h += `<h2>Sauvegarde</h2><div class="card"><p class="small">Ta progression reste sur cet appareil. Exporte-la pour la conserver ou la transférer sur un autre téléphone.</p><div class="row wrap"><button class="btn primary" data-act="export">Exporter la progression</button><label class="btn">Importer<input type="file" accept=".json,application/json" id="save-file" hidden></label></div>${T.memoryOnly ? `<p class="small" style="color:var(--bad);margin:10px 0 0">Le stockage n’est pas disponible ici : la progression sera perdue à la fermeture.</p>` : ""}</div>`;
+    h += `<h2>Remettre à zéro</h2><div class="card"><p class="small">Efface les tampons, révisions et notes du profil actuel uniquement.</p><button class="btn danger" data-act="reset">Effacer la progression de ce profil</button></div>`;
+    return h;
+  }
+
+  /* ---------- Rendu ---------- */
+  function render() {
+    const s = S(); const v = s.nav.view; const p = PK[s.nav.pack];
+    const titles = { home: "", pack: p ? p.title : "", notion: p ? p.title : "", person: p ? p.title : "", quiz: "Test", review: "Révisions", discover: "Découverte", settings: "Réglages", requests: "À développer", modules: "Modules", search: "Rechercher" };
+    document.documentElement.style.setProperty("--accent", (p ? (T.isDark() ? p.accentDark || p.accent : p.accent) : "") || "var(--l1)");
+    const cur = s.profiles.find(x => x.id === s.current);
+    const curN = v === "notion" && p ? p._n[s.nav.notion] : null;
+    const hasNote = curN && P().notes[nkey(p.id, curN.id)];
+    const titleHTML = curN ? `<span class="title two"><small>${esc(p.emoji || "")} ${esc(p.short || p.title)}${curN._par ? " › " + esc(curN._par.title) : ""}</small><span class="t-main">${esc(curN.title)}</span></span>` : `<span class="title">${p && ["pack", "notion", "person"].includes(v) ? esc(p.emoji || "") + " " : ""}${esc(titles[v] || "")}</span>`;
+    $("#top").innerHTML = `${v === "home" ? `<span style="flex:1"></span>` : `<button class="icon-btn" data-act="back" aria-label="Retour">${I.back}</button>${titleHTML}`}${curN && !curN.group ? `<button class="icon-btn notes-btn${hasNote ? " has" : ""}" data-act="notes-sheet" aria-label="Mes notes${hasNote ? " (une note existe)" : ""}">${I.note}</button>` : ""}${v === "search" ? "" : `<button class="icon-btn" data-act="view" data-v="search" aria-label="Rechercher">${I.loupe}</button>`}<button class="who" data-act="tab" data-v="settings" aria-label="Profil actuel : ${esc(cur ? cur.name : "")}">${esc(cur ? cur.name : "")}</button>`;
+    resetFig();
+    const m = $("#main");
+    m.innerHTML = v === "pack" ? vPack() : v === "notion" ? vNotion() : v === "person" ? vPerson() : v === "quiz" ? vQuiz() : v === "review" ? vReview() : v === "settings" ? vSettings() : v === "requests" ? vRequests() : v === "modules" ? vModules() : v === "search" ? vSearch() : v === "discover" ? vDiscover() : vHome();
+    drawFigures(m);
+    if (v === "search") { const qi = $("#search-q"); if (qi) { qi.focus(); qi.setSelectionRange(qi.value.length, qi.value.length); } }
+    document.body.dataset.view = v;
+    const main = v === "review" ? "review" : v === "discover" ? "discover" : ["settings", "requests", "modules"].includes(v) ? "settings" : "home";
+    document.querySelectorAll(".nav button").forEach(b => b.setAttribute("aria-current", b.dataset.v === main ? "page" : "false"));
+    const due = dueItems().length; const badge = $("#due-badge"); if (badge) { badge.textContent = due; badge.hidden = !due; }
+    const rb = $("#req-badge"); if (rb) { rb.textContent = s.requests.length; rb.hidden = !s.requests.length; }
+    if (v === "pack" && s.nav.tab === "timeline" && s.nav.hl != null) { const e = document.getElementById("ev-" + s.nav.hl); if (e) setTimeout(() => e.scrollIntoView({ block: "center" }), 30); }
+  }
+
+  /* ---------- Événements ---------- */
+  document.addEventListener("click", ev => {
+    const el = ev.target.closest("[data-act]"); if (!el) return;
+    const a = el.dataset.act, d = el.dataset; const s = S();
+    if (el.tagName === "INPUT" && (el.type === "radio" || el.type === "range")) return;
+    switch (a) {
+      case "back": back(); break;
+      case "home": stack.length = 0; go({ view: "home" }, false); break;
+      case "tab": stack.length = 0; go({ view: d.v }, false); break;
+      case "view": go({ view: d.v }); break;
+      case "pack": go({ view: "pack", pack: d.p, tab: "path" }); break;
+      case "peek": if (peek.has(d.p)) peek.delete(d.p); else peek.add(d.p); render(); break;
+      case "ptab": s.nav.tab = d.k; s.nav.hl = null; save(); render(); break;
+      case "notion": {
+        const nav = { view: "notion", pack: d.p, notion: d.n, level: P().levels[nkey(d.p, d.n)] || 1 };
+        if (d.cross) { const di = domainInfo(d.p); toast("Tu passes dans le domaine " + di.emoji + " " + di.title); }
+        if (d.replace) go(nav, false); else go(nav);
+        break;
+      }
+      case "missing": {
+        const di = domainInfo(d.p); const other = d.p !== d.from;
+        const on = toggleReq({ pack: d.p, kind: other ? "lien" : "nouvelle", ref: d.n, label: "« " + d.label.replace(/<[^>]+>/g, "") + " » (notion « " + d.n + " »)", context: "Lien depuis le domaine « " + (PK[d.from] ? PK[d.from].title : d.from) + " »" });
+        toast(on ? (other ? `Le domaine ${di.emoji} ${di.title} n’est pas encore installé : demande ajoutée à « À développer ».` : "Notion pas encore rédigée : demande ajoutée.") : "Demande retirée.");
+        render(); break;
+      }
+      case "person": go({ view: "person", pack: d.p, person: d.x }); break;
+      case "lvl": {
+        const k = nkey(s.nav.pack, s.nav.notion);
+        const lv = Math.max(1, Math.min(3, (s.nav.level || 1) + Number(d.d)));
+        s.nav.level = lv; P().levels[k] = lv; save(); render();
+        const head = $(".notion-head"); if (head) { const target = head.offsetTop + head.offsetHeight; if (window.scrollY > target) window.scrollTo(0, target); }
+        break;
+      }
+      case "tl": go({ view: "pack", pack: s.nav.pack, tab: "timeline", hl: d.i }); break;
+      case "gloss": {
+        const pk = PK[d.p]; const g = pk && pk._g[d.g]; if (!g) break;
+        const o = document.createElement("div"); o.className = "sheet";
+        o.innerHTML = `<div class="sheet-in" role="dialog" aria-modal="true" aria-label="${esc(g.t)}"><h3>${esc(g.t)}</h3><p class="reading" style="font-size:1.02rem">${esc(g.d)}</p><div class="row wrap"><button class="btn" data-act="close">Fermer</button><button class="btn small" data-act="gloss-all" data-p="${esc(d.p)}" data-g="${esc(d.g)}">Voir le glossaire</button></div></div>`;
+        o.addEventListener("click", e => { if (e.target === o) o.remove(); });
+        document.body.appendChild(o); $(".btn", o).focus(); break;
+      }
+      case "gloss-all": document.querySelectorAll(".sheet").forEach(x => x.remove()); go({ view: "pack", pack: d.p, tab: "glossary" }); setTimeout(() => { const e = document.getElementById("gl-" + d.g); if (e) { e.scrollIntoView({ block: "center" }); e.style.background = "var(--soft)"; } }, 40); break;
+      case "close": document.querySelectorAll(".sheet").forEach(x => x.remove()); break;
+      case "flag": {
+        const r = JSON.parse(d.r); const on = toggleReq(r);
+        el.setAttribute("aria-pressed", on); el.textContent = on ? "✓ Marqué à développer" : "✎ " + (d.l || "À développer");
+        const rb = $("#req-badge"); if (rb) { rb.textContent = s.requests.length; rb.hidden = !s.requests.length; }
+        if (on) toast("Ajouté à « À développer » (Réglages)."); break;
+      }
+      case "quiz": startQuiz(s.nav.pack, s.nav.notion, +d.l); break;
+      case "pick": {
+        if (Q.picked != null) break;
+        const it = Q.items[Q.i]; const q = PK[it.p]._n[it.n].levels[it.l].quiz[it.qi];
+        Q.picked = +d.o; Q.res[Q.i] = Q.picked === q.a; render();
+        if (navigator.vibrate) navigator.vibrate(Q.res[Q.i] ? 15 : [20, 40, 20]); break;
+      }
+      case "next-q": {
+        Q.i++; Q.picked = null;
+        if (Q.i < Q.items.length) { const it = Q.items[Q.i]; Q.order = shuffle(PK[it.p]._n[it.n].levels[it.l].quiz[it.qi].o.map((_, i) => i)); render(); window.scrollTo(0, 0); }
+        else { finishQuiz(); render(); const st = $(".result .stamp"); if (st && Q.newStamp) { st.classList.add("pressed"); if (navigator.vibrate) navigator.vibrate(40); } }
+        break;
+      }
+      case "after-quiz": { const it = Q.items[0]; P().levels[nkey(it.p, it.n)] = +d.l; stack.pop(); Q = null; s.nav = { view: "notion", pack: it.p, notion: it.n, level: +d.l }; save(); render(); window.scrollTo(0, 0); break; }
+      case "start-review": startReview(); break;
+      case "reshuffle": s.settings.discoverSeed = (s.settings.discoverSeed || 0) + 1; save(); render(); break;
+      case "disc-go": { const l = +d.l; P().levels[nkey(d.p, d.n)] = l; go({ view: "notion", pack: d.p, notion: d.n, level: l }); break; }
+      case "kids": if (openKids.has(d.k)) openKids.delete(d.k); else openKids.add(d.k); render(); break;
+      case "group": if (openGroups.has(d.k)) openGroups.delete(d.k); else openGroups.add(d.k); s.settings.openGroups = [...openGroups]; save(); render(); break;
+      case "notes-sheet": {
+        const pk = PK[s.nav.pack]; const n = pk && pk._n[s.nav.notion]; if (!n) break;
+        const k = nkey(pk.id, n.id);
+        const o = document.createElement("div"); o.className = "sheet";
+        o.innerHTML = `<div class="sheet-in" role="dialog" aria-modal="true" aria-label="Mes notes"><div class="spread"><h3 style="margin:0">Mes notes</h3><button class="btn small" data-act="close-notes">Fermer</button></div><p class="small muted" style="margin:4px 0 10px">${esc(n.title)}. Enregistrement automatique ; tes questions pourront être jointes à l’export « À développer ».</p><textarea data-note="${esc(k)}" id="sheet-note" style="min-height:40vh" placeholder="Une question, une remarque, un lien avec autre chose…">${esc(P().notes[k] || "")}</textarea></div>`;
+        o.addEventListener("click", e => { if (e.target === o) { const y = window.scrollY; o.remove(); render(); window.scrollTo(0, y); } });
+        document.body.appendChild(o); setTimeout(() => { const t = $("#sheet-note"); if (t) { t.focus(); t.setSelectionRange(t.value.length, t.value.length); } }, 30);
+        break;
+      }
+      case "close-notes": { const y = window.scrollY; document.querySelectorAll(".sheet").forEach(x => x.remove()); render(); window.scrollTo(0, y); break; }
+
+      case "next-notion": { const it = Q.items[0]; const pk = PK[it.p]; const nx = pk._seq[pk._n[it.n]._s + 1]; stack.pop(); Q = null; if (nx) { s.nav = { view: "notion", pack: pk.id, notion: nx.id, level: P().levels[nkey(pk.id, nx.id)] || 1 }; save(); render(); window.scrollTo(0, 0); } break; }
+      case "fig-el": { const f = document.getElementById(d.f); const on = new Set(f.dataset.on.split(",").filter(Boolean)); if (on.has(d.k)) on.delete(d.k); else on.add(d.k); f.dataset.on = [...on].join(","); el.setAttribute("aria-pressed", on.has(d.k)); drawFigures(f.parentElement); break; }
+      case "fig-ref": { const f = document.getElementById(d.f); f.dataset.ref = d.i; drawFigures(f.parentElement); break; }
+      case "del-req": s.requests = s.requests.filter(r => r.key !== d.k); save(); render(); break;
+      case "add-req": {
+        let pack = $("#rq-pack").value; const kind = $("#rq-kind").value; const label = $("#rq-label").value.trim(); const note = $("#rq-note").value.trim();
+        let title = PK[pack] ? PK[pack].title : (T.DOMAINS[pack] ? T.DOMAINS[pack].title : pack);
+        if (pack === "_new") { title = $("#rq-new").value.trim(); if (!title) { toast("Donne un nom au nouveau domaine."); break; } pack = "nouveau:" + title.toLowerCase(); }
+        if (!label && kind !== "sujet") { toast("Précise ce qu’il faut développer."); break; }
+        s.requests.push({ key: pack + "|" + kind + "|manuel-" + uid(), pack, packTitle: title, kind, ref: "manuel", label: label || title, note, created: today() });
+        save(); render(); toast("Demande ajoutée."); break;
+      }
+      case "export-req": {
+        if (!confirm("Exporter les demandes dans un fichier, puis vider la liste ?")) break;
+        download(requestFile(), "tartiflette-demandes-" + today() + ".json"); markSent(); s.requests = []; save(); render(); toast("Demandes exportées, liste vidée."); break;
+      }
+      case "copy-req": {
+        const txt = JSON.stringify(requestFile(), null, 2);
+        (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(() => {
+          toast("Texte copié : colle-le dans ton message à Claude.");
+          setTimeout(() => { if (confirm("Vider la liste des demandes maintenant ?")) { markSent(); s.requests = []; save(); render(); } }, 300);
+        }).catch(() => toast("Copie impossible ici : utilise l’export."));
+        break;
+      }
+      case "del-mod": if (confirm("Retirer ce module ? Ta progression est conservée.")) T.removeModule(d.k, d.id).then(() => { T.applyPrefs(); render(); toast("Module retiré."); }); break;
+      case "goto-themes": stack.length = 0; go({ view: "settings" }, false); setTimeout(() => { const t = document.getElementById("themes"); if (t) t.scrollIntoView({ block: "start" }); }, 30); break;
+      case "search-go": {
+        const r = lastResults[+d.i]; if (!r) break;
+        const nav = Object.assign({}, r.e.nav); if (r.lvl) nav.level = r.lvl; else if (nav.view === "notion") nav.level = P().levels[nkey(nav.pack, nav.notion)] || 1;
+        go(nav);
+        if (r.e.gloss) setTimeout(() => { const e = document.getElementById("gl-" + r.e.gloss); if (e) { e.scrollIntoView({ block: "center" }); e.style.background = "var(--soft)"; } }, 40);
+        break;
+      }
+      case "home-detail": s.settings.homeDetail = !s.settings.homeDetail; save(); render(); break;
+      case "soon": { const on = toggleReq({ pack: d.p, kind: "sujet", ref: d.p, label: d.t }); toast(on ? `${d.t} : demande ajoutée à « À développer ».` : "Demande retirée."); render(); break; }
+      case "add-profile": { const id = "p" + uid(); s.profiles.push({ id, name: "Profil " + (s.profiles.length + 1) }); s.data[id] = freshProfile(); save(); render(); break; }
+      case "del-profile": { if (!confirm("Supprimer ce profil et toute sa progression ?")) break; s.profiles = s.profiles.filter(x => x.id !== d.id); delete s.data[d.id]; if (s.current === d.id) s.current = s.profiles[0].id; save(); render(); break; }
+      case "export": download({ app: "tartiflette", type: "progression", exported: new Date().toISOString(), state: s }, "tartiflette-progression-" + today() + ".json"); toast("Progression exportée."); break;
+      case "scale": s.settings.scale = Math.max(0.85, Math.min(1.4, Math.round((s.settings.scale + Number(d.d)) * 100) / 100)); T.applyPrefs(); save(); break;
+      case "theme": s.settings.theme = d.k; T.applyPrefs(); save(); render(); break;
+      case "reset": if (confirm("Effacer les tampons, révisions et notes de ce profil ?")) { s.data[s.current] = freshProfile(); save(); render(); toast("Progression effacée."); } break;
+    }
+  });
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") document.querySelectorAll(".sheet").forEach(x => x.remove());
+    if ((e.key === "Enter" || e.key === " ") && e.target.classList && e.target.classList.contains("pack-row")) { e.preventDefault(); go({ view: "pack", pack: e.target.dataset.p, tab: "path" }); }
+  });
+  document.addEventListener("input", ev => {
+    const el = ev.target; const s = S();
+    if (el.dataset.note) { if (el.value.trim()) P().notes[el.dataset.note] = el.value; else delete P().notes[el.dataset.note]; save(); }
+    if (el.dataset.reqnote) { const r = s.requests.find(x => x.key === el.dataset.reqnote); if (r) { r.note = el.value; save(); } }
+    if (el.dataset.pname) { const pr = s.profiles.find(x => x.id === el.dataset.pname); if (pr) { pr.name = el.value.trim() || "Sans nom"; save(); const w = $(".who"); if (w && pr.id === s.current) w.textContent = pr.name; } }
+    if (el.id === "gl-search") { const q = el.value.trim().toLowerCase(); document.querySelectorAll("#gl-list > div").forEach(x => { x.hidden = q && !x.dataset.gt.includes(q); }); }
+    if (el.id === "search-q") { s.nav.q = el.value; save(); lastResults = searchResults(el.value); $("#search-res").innerHTML = resultsHTML(el.value); }
+    if (el.id === "pack-search") { const q = el.value.trim().toLowerCase(); document.querySelectorAll(".pack-row").forEach(x => { x.hidden = q && !x.dataset.name.includes(q); }); }
+    if (el.dataset.act === "fig-z") { const f = document.getElementById(el.dataset.f); f.dataset.z = el.value; drawFigures(f.parentElement); }
+    if (el.dataset.act === "fig-d") { const f = document.getElementById(el.dataset.f); f.dataset.d = Math.pow(10, parseFloat(el.value)) * 1.3; drawFigures(f.parentElement); }
+    if (el.dataset.act === "fig-a") { const f = document.getElementById(el.dataset.f); f.dataset.a = el.value; drawFigures(f.parentElement); }
+  });
+  document.addEventListener("change", async ev => {
+    const el = ev.target; const s = S();
+    if (el.dataset.act === "use-profile") { s.current = el.dataset.id; save(); render(); toast("Profil : " + (s.profiles.find(x => x.id === s.current) || {}).name); }
+    if (el.id === "rq-pack") { $("#rq-newwrap").hidden = el.value !== "_new"; }
+    if (el.dataset.act === "opt") { s.settings[el.dataset.k] = el.checked; save(); render(); }
+    if (el.id === "mod-file" && el.files[0]) {
+      try {
+        const m = JSON.parse(await el.files[0].text());
+        if (m.type === "demandes" || m.type === "progression") { toast("Ce fichier n’est pas un module."); return; }
+        const kept = await T.importModule(m);
+        const target = T.isExt(kept) ? PK[kept.target] : PK[kept.id];
+        INDEX = null; T.applyPrefs(); render(); toast(T.isThemes(kept) ? `Thèmes « ${kept.title} » ajoutés : choisis-les dans Réglages.` : T.isExt(kept) ? `Extension « ${kept.title || kept.id} » ajoutée${target ? " à " + target.title : " (domaine en attente)"}.` : `Domaine « ${kept.title} » installé.`);
+      } catch (e) { toast("Ce fichier n’est pas un module valide."); }
+    }
+    if (el.id === "save-file" && el.files[0]) {
+      try { const j = JSON.parse(await el.files[0].text()); if (j.app !== "tartiflette" && j.app !== "strates") throw 0; if (!j.state || !j.state.profiles) throw 0; if (!confirm("Remplacer la progression actuelle par celle du fichier ?")) return; j.state.requests = j.state.requests || []; T.S = j.state; save(); T.applyPrefs(); render(); toast("Progression importée."); }
+      catch (e) { toast("Ce fichier n’est pas une sauvegarde Tartiflette."); }
+    }
+  });
+  if (window.matchMedia) matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { T.applyPrefs(); render(); });
+
+  /* ---------- Démarrage ---------- */
+  document.querySelectorAll(".nav button").forEach(b => { b.innerHTML = I[b.dataset.icon] + "<span>" + b.dataset.label + "</span>" + (b.dataset.v === "review" ? `<span class="count" id="due-badge" hidden>0</span>` : b.dataset.v === "settings" ? `<span class="count soft" id="req-badge" hidden>0</span>` : ""); });
+  T.applyPrefs();
+  $("#main").innerHTML = `<div class="empty">Préparation de la tartiflette…</div>`;
+  T.loadModules().then(() => { if (["quiz"].includes(S().nav.view)) S().nav = { view: "home" }; T.applyPrefs(); render(); });
+  if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
+})();
+
+</script>
+</body>
+</html>

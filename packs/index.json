@@ -1,0 +1,46 @@
+{
+  "modules": [
+    {
+      "file": "espace.json"
+    },
+    {
+      "file": "espace-portraits-1.json"
+    },
+    {
+      "file": "espace-categories-1.json"
+    },
+    {
+      "file": "japon.json"
+    },
+    {
+      "file": "japon-voyage-1.json"
+    },
+    {
+      "file": "japon-tokyo-quartiers-1.json"
+    },
+    {
+      "file": "japon-kyoto-quartiers-1.json"
+    },
+    {
+      "file": "japon-categories-1.json"
+    },
+    {
+      "file": "japon-approfondissements-1.json"
+    },
+    {
+      "file": "japon-osaka-nara-1.json"
+    },
+    {
+      "file": "philosophie.json"
+    },
+    {
+      "file": "opendata.json"
+    },
+    {
+      "file": "themes-saisons.json"
+    },
+    {
+      "file": "themes-gourmands.json"
+    }
+  ]
+}
