@@ -548,10 +548,13 @@ const T = (function () {
     if (isThemes(m)) return Array.isArray(m.themes) && m.themes.every(t => t.id && t.vars);
     return Array.isArray(m.notions) && m.notions.length > 0;
   }
+  // Fraîcheur d’un module : version d’abord, puis date de construction (_built).
+  const ver = m => Number(m && m.version) || 1;
+  const fresher = (a, b) => ver(a) !== ver(b) ? ver(a) > ver(b) : String(a._built || "") > String(b._built || "");
   function keep(m, source) {
     const bag = isExt(m) ? RAW.exts : isThemes(m) ? RAW.themes : RAW.packs;
     const cur = bag[m.id];
-    if (!cur || (Number(m.version) || 1) > (Number(cur.version) || 1) || ((Number(m.version) || 1) === (Number(cur.version) || 1) && source === "site")) { m._source = m._source || source; bag[m.id] = m; }
+    if (!cur || fresher(m, cur)) { m._source = m._source || source; bag[m.id] = m; }
   }
   function mergeNotion(n, en) {
     for (const [k, v] of Object.entries(en)) {
@@ -603,19 +606,42 @@ const T = (function () {
     PACKS.sort((a, b) => a.title.localeCompare(b.title, "fr"));
   }
   async function loadModules() {
+    // 1. Ce qui est déjà stocké sur l’appareil (modules importés ou copies du site).
+    const stored = {};
+    for (const m of await idbAll()) if (validModule(m)) { stored[prefix(m) + m.id] = m; keep(m, m._source || "importé"); }
+    // 2. Le site : on ne remplace la copie locale que si la version du site est plus récente.
     try {
       const r = await fetch("packs/index.json", { cache: "no-cache" });
       if (r.ok) {
         const idx = await r.json();
         const files = (idx.modules || []).concat(idx.packs || [], idx.extensions || []);
         for (const e of files) {
-          try { const mr = await fetch("packs/" + e.file, { cache: "no-cache" }); if (mr.ok) { const m = await mr.json(); if (validModule(m)) { m._key = prefix(m) + m.id; keep(m, "site"); idbPut(Object.assign({}, m, { _source: "site" })); } } } catch (e2) { /* hors ligne */ }
+          try {
+            const mr = await fetch("packs/" + e.file, { cache: "no-cache" }); if (!mr.ok) continue;
+            const m = await mr.json(); if (!validModule(m)) continue;
+            m._key = prefix(m) + m.id; const local = stored[m._key];
+            if (!local || fresher(m, local)) { m._source = "site"; keep(m, "site"); idbPut(Object.assign({}, m)); }
+          } catch (e2) { /* hors ligne */ }
         }
       }
     } catch (e) { /* aperçu ou hors ligne */ }
-    for (const m of await idbAll()) if (validModule(m)) keep(m, m._source || "importé");
     if (window.TARTIFLETTE_EMBEDDED) window.TARTIFLETTE_EMBEDDED.forEach(m => { const bag = isExt(m) ? RAW.exts : isThemes(m) ? RAW.themes : RAW.packs; if (!bag[m.id]) keep(m, "intégré"); });
     build();
+  }
+  // Mise à jour groupée : un seul fichier qui contient tous les modules.
+  async function importBundle(b) {
+    const res = { added: 0, updated: 0, kept: 0 };
+    for (const m of (b.modules || [])) {
+      if (!validModule(m)) continue;
+      const bag = isExt(m) ? RAW.exts : isThemes(m) ? RAW.themes : RAW.packs; const cur = bag[m.id];
+      if (cur && !fresher(m, cur) && String(cur._built || "") === String(m._built || "")) { res.kept++; continue; }
+      if (cur && fresher(cur, m)) { res.kept++; continue; }
+      m._key = prefix(m) + m.id; m._source = "importé"; m._importedAt = today();
+      delete bag[m.id]; await idbPut(m); keep(m, "importé");
+      cur ? res.updated++ : res.added++;
+    }
+    S.settings.contentDate = b.built || today(); save(); build();
+    return res;
   }
   async function importModule(m) {
     if (!validModule(m)) throw new Error("module invalide");
@@ -816,7 +842,7 @@ const T = (function () {
 
   return { KEY, LEVELS, INTERVALS, DOMAINS, KINDS, THEMES, get S() { return S; }, set S(v) { S = v; }, get memoryOnly() { return memoryOnly; }, P, save, uid, freshProfile, defaults,
     $, esc, today, addDays, shuffle, clone, toast, seasonTheme, resolvedTheme, isDark, applyPrefs,
-    RAW, get PACKS() { return PACKS; }, PK, loadModules, importModule, removeModule, isExt, isThemes, validModule, allThemes, moduleThemes, findTheme,
+    RAW, get PACKS() { return PACKS; }, PK, loadModules, importModule, importBundle, removeModule, isExt, isThemes, validModule, allThemes, moduleThemes, findTheme,
     levelsOf, nkey, stampsOf, topLevel, dueItems, reqKey, hasReq, toggleReq, flagBtn, stampSVG, minis, domainInfo, md, rich, inline, drawFigures, resetFig };
 })();
 
@@ -1268,7 +1294,10 @@ const T = (function () {
 
   /* ---------- Modules ---------- */
   function vModules() {
-    let h = `<h1>Modules</h1><p class="lead">Un domaine (l’Espace, la Philosophie…) est un module de base. Une extension ajoute ou complète des contenus d’un domaine existant : nouvelles notions, niveaux, figures, jalons, questions. Un module de thèmes ajoute des palettes de couleurs. Installer ou mettre à jour un module ne touche jamais à ta progression.</p>`;
+    const cd = S().settings.contentDate;
+    let h = `<h1>Modules</h1>
+      <div class="card update-card"><h2 style="margin-top:0">Mettre à jour le contenu</h2><p class="small">Quand je t’envoie un fichier <strong>tartiflette-mise-a-jour</strong>, enregistre-le sur ton téléphone, puis choisis-le ici. Tous les sujets sont mis à jour d’un coup, sans passer par GitHub, et ta progression est conservée.${cd ? ` Dernière mise à jour installée : ${esc(String(cd).slice(0, 10).split("-").reverse().join("/"))}.` : ""}</p><label class="btn primary">Choisir le fichier de mise à jour<input type="file" accept=".json,application/json" id="mod-file" hidden></label></div>
+      <p class="lead">Un domaine (l’Espace, la Philosophie…) est un module de base. Une extension ajoute ou complète des contenus d’un domaine existant : nouvelles notions, niveaux, figures, jalons, questions. Un module de thèmes ajoute des palettes de couleurs. Installer ou mettre à jour un module ne touche jamais à ta progression.</p>`;
     T.PACKS.forEach(p => {
       h += `<div class="card"><div class="spread"><div><strong>${esc(p.emoji || "")} ${esc(p.title)}</strong><div class="small muted">Version ${esc(p.version || 1)}, ${p._real.length} notions, état des connaissances ${esc(p.knowledge || "")}, source : ${esc(p._source || "")}</div></div>${p._source === "importé" ? `<button class="btn small danger" data-act="del-mod" data-k="p" data-id="${esc(p.id)}">Retirer</button>` : ""}</div>`;
       if (p._exts.length) h += `<ul class="section-list" style="margin-top:8px">${p._exts.map(e => `<li class="spread"><span><strong>${esc(e.title || e.id)}</strong><span class="small muted"> version ${esc(e.version || 1)}${e._importedAt ? ", importée le " + esc(e._importedAt.split("-").reverse().join("/")) : ""}, ${esc(e._source || "")}</span>${e.description ? `<div class="small">${esc(e.description)}</div>` : ""}</span>${e._source === "importé" ? `<button class="btn small danger" data-act="del-mod" data-k="x" data-id="${esc(e.id)}">Retirer</button>` : ""}</li>`).join("")}</ul>`;
@@ -1279,7 +1308,7 @@ const T = (function () {
     if (tm.length) h += `<h2>Thèmes</h2>` + tm.map(m => `<div class="card"><div class="spread"><div><strong>${esc(m.emoji || "🎨")} ${esc(m.title)}</strong><div class="small muted">Version ${esc(m.version || 1)}, ${m.themes.length} thème${m.themes.length > 1 ? "s" : ""}, source : ${esc(m._source || "")}</div>${m.description ? `<div class="small">${esc(m.description)}</div>` : ""}</div>${m._source === "importé" ? `<button class="btn small danger" data-act="del-mod" data-k="t" data-id="${esc(m.id)}">Retirer</button>` : ""}</div></div>`).join("");
     const orphans = Object.values(T.RAW.exts).filter(e => !PK[e.target]);
     if (orphans.length) h += `<h2>En attente</h2><p class="small muted">Extensions dont le domaine n’est pas installé.</p>` + orphans.map(e => `<div class="card small">${esc(e.title || e.id)} (pour « ${esc(e.target)} »)</div>`).join("");
-    h += `<h2>Importer</h2><div class="card"><p class="small">Choisis un fichier .json reçu : l’appli reconnaît seule s’il s’agit d’un nouveau domaine, d’une mise à jour, d’une extension ou de thèmes. Si une version plus récente est déjà installée, elle est conservée.</p><label class="btn primary">Importer un module<input type="file" accept=".json,application/json" id="mod-file" hidden></label></div>`;
+    h += `<h2>Importer</h2><div class="card"><p class="small">Choisis un fichier .json reçu : l’appli reconnaît seule s’il s’agit d’un nouveau domaine, d’une mise à jour, d’une extension ou de thèmes. Si une version plus récente est déjà installée, elle est conservée.</p><label class="btn">Importer un module<input type="file" accept=".json,application/json" id="mod-file-2" hidden></label></div>`;
     return h;
   }
 
@@ -1288,7 +1317,7 @@ const T = (function () {
     const s = S();
     let h = `<h1>Réglages</h1>`;
     h += `<div class="settings-links"><button class="card link-card" data-act="view" data-v="requests"><span class="emoji" aria-hidden="true">✎</span><span><strong>À développer</strong><span class="small muted">${s.requests.length} demande${s.requests.length > 1 ? "s" : ""} en attente</span></span></button>
-      <button class="card link-card" data-act="view" data-v="modules"><span class="emoji" aria-hidden="true">🧩</span><span><strong>Modules</strong><span class="small muted">${T.PACKS.length} domaine${T.PACKS.length > 1 ? "s" : ""}, ${Object.keys(T.RAW.exts).length} extension${Object.keys(T.RAW.exts).length > 1 ? "s" : ""}, ${Object.keys(T.RAW.themes).length} thème${Object.keys(T.RAW.themes).length > 1 ? "s" : ""}</span></span></button></div>`;
+      <button class="card link-card" data-act="view" data-v="modules"><span class="emoji" aria-hidden="true">🧩</span><span><strong>Modules et mises à jour</strong><span class="small muted">${T.PACKS.length} domaine${T.PACKS.length > 1 ? "s" : ""}, ${Object.keys(T.RAW.exts).length} extension${Object.keys(T.RAW.exts).length > 1 ? "s" : ""}, ${Object.keys(T.RAW.themes).length} thème${Object.keys(T.RAW.themes).length > 1 ? "s" : ""}</span></span></button></div>`;
     const chip = t => {
       const light = THEMES.find(x => x.id === "light").vars, dark = THEMES.find(x => x.id === "dark").vars;
       let v = t.vars, bg, extra = "";
@@ -1481,9 +1510,10 @@ const T = (function () {
     if (el.dataset.act === "use-profile") { s.current = el.dataset.id; save(); render(); toast("Profil : " + (s.profiles.find(x => x.id === s.current) || {}).name); }
     if (el.id === "rq-pack") { $("#rq-newwrap").hidden = el.value !== "_new"; }
     if (el.dataset.act === "opt") { s.settings[el.dataset.k] = el.checked; save(); render(); }
-    if (el.id === "mod-file" && el.files[0]) {
+    if ((el.id === "mod-file" || el.id === "mod-file-2") && el.files[0]) {
       try {
         const m = JSON.parse(await el.files[0].text());
+        if (m.type === "bundle") { const r = await T.importBundle(m); INDEX = null; T.applyPrefs(); render(); toast(`Contenu mis à jour : ${r.added} ajouté${r.added > 1 ? "s" : ""}, ${r.updated} mis à jour, ${r.kept} déjà à jour.`); return; }
         if (m.type === "demandes" || m.type === "progression") { toast("Ce fichier n’est pas un module."); return; }
         const kept = await T.importModule(m);
         const target = T.isExt(kept) ? PK[kept.target] : PK[kept.id];

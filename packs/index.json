@@ -37,6 +37,18 @@
       "file": "opendata.json"
     },
     {
+      "file": "ia.json"
+    },
+    {
+      "file": "histoire-france.json"
+    },
+    {
+      "file": "sociologie.json"
+    },
+    {
+      "file": "psychologie.json"
+    },
+    {
       "file": "themes-saisons.json"
     },
     {
