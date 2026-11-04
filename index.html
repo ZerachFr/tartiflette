@@ -427,6 +427,18 @@ div.path { margin: 0; padding: 0; }
 .disc-card .sum { font-size: .84rem; color: var(--muted); margin-top: 2px; }
 .disc-card .go { font-size: .78rem; font-weight: 700; color: var(--lv); margin-top: 4px; display: block; }
 
+/* Tri des sujets et repères « Nouveau » */
+.sortbar { display: inline-flex; gap: 4px; padding: 3px; border-radius: 999px; background: var(--soft); margin: 0 0 14px; }
+.sort-btn { border: 0; background: none; padding: 6px 12px; border-radius: 999px; font: inherit; font-size: .85rem; font-weight: 700; color: var(--muted); cursor: pointer; }
+.sort-btn[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.theme-head { font-family: var(--f-ui); font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 18px 0 8px; }
+.b-ring { position: relative; }
+.b-new { position: absolute; top: -6px; right: -10px; background: var(--l2); color: #fff; font-family: var(--f-ui); font-size: .62rem; font-weight: 800; letter-spacing: .02em; padding: 2px 6px; border-radius: 999px; box-shadow: 0 0 0 2px var(--paper); text-transform: uppercase; }
+.tag.new { display: inline-block; vertical-align: middle; background: var(--l2); color: #fff; font-family: var(--f-ui); font-size: .62rem; font-weight: 800; padding: 1px 6px; border-radius: 999px; text-transform: uppercase; letter-spacing: .02em; }
+.news-card { border-left: 4px solid var(--l2); margin: 0 0 14px; }
+.news-card ul { margin: 8px 0; padding-left: 18px; }
+.news-card li { margin-bottom: 4px; }
+
 </style>
 </head>
 <body>
@@ -588,7 +600,7 @@ const T = (function () {
     Object.keys(PK).forEach(k => delete PK[k]);
     Object.values(RAW.packs).forEach(base => {
       const p = clone(base); p._source = base._source; p._exts = [];
-      Object.values(RAW.exts).filter(e => e.target === p.id).sort((a, b) => (a.order || 0) - (b.order || 0) || a.id.localeCompare(b.id)).forEach(e => { applyExt(p, e); p._exts.push(e); });
+      Object.values(RAW.exts).filter(e => e.target === p.id).sort((a, b) => (a.order || 0) - (b.order || 0) || a.id.localeCompare(b.id)).forEach(e => { applyExt(p, e); p._exts.push(e); if (Array.isArray(e.news)) p.news = (p.news || []).concat(e.news); });
       p.timeline = (p.timeline || []).slice().sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
       p._n = {}; p.notions.forEach(n => { p._n[n.id] = n; });
       const kids = {}; p.notions.forEach(n => { n._kids = []; if (n.parent && p._n[n.parent] && n.parent !== n.id) (kids[n.parent] = kids[n.parent] || []).push(n); });
@@ -906,29 +918,56 @@ const T = (function () {
     const ns = p._real.length || 1; const c = l => p._real.filter(n => stampsOf(p.id, n.id)[l]).length / ns;
     return `<svg class="ring" viewBox="0 0 100 100" aria-hidden="true">${[[44, 1], [37, 2], [30, 3]].map(([r, l]) => { const L = 2 * Math.PI * r; return `<circle cx="50" cy="50" r="${r}" fill="none" stroke="var(--soft)" stroke-width="5"/>` + (c(l) > 0 ? `<circle cx="50" cy="50" r="${r}" fill="none" stroke="var(--l${l})" stroke-width="5" stroke-linecap="round" stroke-dasharray="${(c(l) * L).toFixed(1)} ${L.toFixed(1)}" transform="rotate(-90 50 50)"/>` : ""); }).join("")}</svg>`;
   }
+  /* ---------- Nouveautés et dernière utilisation ---------- */
+  const ack = () => { const pr = P(); pr.newsAck = pr.newsAck || {}; pr.newsAckN = pr.newsAckN || {}; pr.lastUsed = pr.lastUsed || {}; return pr; };
+  const isPackNew = p => (p.news || []).some(x => !(ack().newsAck[p.id] || []).includes(x.id));
+  const isNotionNew = (p, nid) => (p.news || []).some(x => (x.notions || []).includes(nid) && !(ack().newsAckN[p.id + "/" + nid] || []).includes(x.id));
+  const sessionNews = {};
+  function freshNews(p) {
+    if (!(p.id in sessionNews)) { const seen = ack().newsAck[p.id] || []; sessionNews[p.id] = (p.news || []).filter(x => !seen.includes(x.id)).sort((a, b) => String(b.date).localeCompare(String(a.date))); ack().newsAck[p.id] = (p.news || []).map(x => x.id); save(); }
+    return sessionNews[p.id];
+  }
+  function touchNotion(p, nid) { const k = p.id + "/" + nid; const ids = (p.news || []).filter(x => (x.notions || []).includes(nid)).map(x => x.id); if (ids.length) { const cur = ack().newsAckN[k] || []; ack().newsAckN[k] = [...new Set(cur.concat(ids))]; } }
+  const THEME_ORDER = ["Sciences", "Histoire et géographie", "Sciences humaines", "Philosophie", "Numérique", "Sports et loisirs"];
+
   function vHome() {
     const due = dueItems().length; const detail = !!S().settings.homeDetail;
     const th = T.findTheme(T.resolvedTheme());
     const deco = th ? `<button class="deco" data-act="goto-themes" aria-label="Thème ${esc(th.name)} : changer de thème" title="Changer de thème">${th.emoji}</button>` : "";
     let h = `<div class="hero">${logoSVG()}<div><h1>Tartiflette${deco}</h1><p class="lead">Le savoir en couches superposées. Choisis un sujet, puis descends de la découverte jusqu’à l’expertise.</p></div></div>`;
     h += `<div class="card review-card"><span class="big">${due}</span><div><strong>${due ? "À revoir aujourd’hui" : "Rien à revoir aujourd’hui"}</strong><div class="small muted">${due ? "Quelques minutes pour ancrer ce que tu as appris." : "Gagne des tampons : les notions reviendront ici au bon moment."}</div></div>${due ? `<button class="btn primary" data-act="start-review">Réviser</button>` : ""}</div>`;
-    h += `<div class="spread" style="margin:22px 0 10px"><h2 style="margin:0">Sujets</h2><div class="row">${T.PACKS.length > 8 ? `<input type="search" id="pack-search" placeholder="Filtrer" aria-label="Filtrer les sujets" style="max-width:140px">` : ""}<button class="btn small peek" data-act="home-detail" aria-pressed="${detail}" aria-label="${detail ? "Revenir aux bulles" : "Voir le détail de l’avancement"}">${detail ? I.bubbles : I.bars} ${detail ? "Bulles" : "Avancement"}</button></div></div>`;
+    const sort = S().settings.homeSort || "alpha";
+    const sorts = [["alpha", "A–Z"], ["theme", "Par thème"], ["recent", "Récents"]];
+    h += `<div class="spread" style="margin:22px 0 8px"><h2 style="margin:0">Sujets</h2><div class="row">${T.PACKS.length > 8 ? `<input type="search" id="pack-search" placeholder="Filtrer" aria-label="Filtrer les sujets" style="max-width:120px">` : ""}<button class="btn small peek" data-act="home-detail" aria-pressed="${detail}" aria-label="${detail ? "Revenir aux bulles" : "Voir le détail de l’avancement"}">${detail ? I.bubbles : I.bars} ${detail ? "Bulles" : "Avancement"}</button></div></div>
+      <div class="sortbar" role="group" aria-label="Trier les sujets">${sorts.map(([k, l]) => `<button class="sort-btn" data-act="home-sort" data-k="${k}" aria-pressed="${sort === k}">${l}</button>`).join("")}</div>`;
     if (!T.PACKS.length) h += `<div class="empty">Aucun sujet installé. Ajoute un module depuis les réglages.</div>`;
     const soon = UPCOMING.filter(([id]) => !PK[id]);
-    if (!detail) {
-      h += `<div class="bubbles">` + T.PACKS.map(p => `<button class="bubble" data-act="pack" data-p="${esc(p.id)}" data-name="${esc(p.title.toLowerCase())}" style="--accent:${esc(T.isDark() ? p.accentDark || p.accent : p.accent)}" aria-label="${esc(p.title)}"><span class="b-ring">${ring(p)}<span class="b-emoji" aria-hidden="true">${esc(p.emoji || "📘")}</span></span><span class="b-name">${esc(p.short || p.title)}</span></button>`).join("")
-        + soon.map(([id, e, t]) => `<button class="bubble soon" data-act="soon" data-p="${id}" data-t="${esc(t)}" aria-label="${esc(t)}, bientôt"><span class="b-ring"><span class="b-emoji" aria-hidden="true">${e}</span></span><span class="b-name">${esc(T.DOMAINS[id] ? T.DOMAINS[id].short : t)}</span><span class="b-soon">bientôt</span></button>`).join("") + `</div>`;
-    } else {
-      T.PACKS.forEach(p => {
-        const ns = p._real; const count = l => ns.filter(n => stampsOf(p.id, n.id)[l]).length;
-        h += `<div class="card pack-row" data-act="pack" data-p="${esc(p.id)}" data-name="${esc(p.title.toLowerCase())}" role="button" tabindex="0" style="--accent:${esc(T.isDark() ? p.accentDark || p.accent : p.accent)}">
-          <div class="pr-main"><span class="emoji" aria-hidden="true">${esc(p.emoji || "📘")}</span><div class="pr-t"><h3>${esc(p.title)}</h3><div class="small muted">${esc(p.subtitle || "")}</div></div></div>
+    const used = ack().lastUsed;
+    let groups;
+    if (sort === "recent") {
+      const list = T.PACKS.slice().sort((a, b) => (used[b.id] || 0) - (used[a.id] || 0) || a.title.localeCompare(b.title, "fr"));
+      groups = [["", list]];
+    } else if (sort === "theme") {
+      const by = {}; T.PACKS.forEach(p => { const t = p.theme || "Autres sujets"; (by[t] = by[t] || []).push(p); });
+      groups = Object.keys(by).sort((a, b) => ((THEME_ORDER.indexOf(a) + 1) || 99) - ((THEME_ORDER.indexOf(b) + 1) || 99) || a.localeCompare(b, "fr")).map(t => [t, by[t]]);
+    } else groups = [["", T.PACKS]];
+    const lastLabel = p => { const t = used[p.id]; if (!t) return "pas encore ouvert"; const d = Math.floor((Date.now() - t) / 86400000); return d <= 0 ? "aujourd’hui" : d === 1 ? "hier" : `il y a ${d} jours`; };
+    const newBadge = p => isPackNew(p) ? `<span class="b-new">Nouveau</span>` : "";
+    const bubble = p => `<button class="bubble" data-act="pack" data-p="${esc(p.id)}" data-name="${esc(p.title.toLowerCase())}" style="--accent:${esc(T.isDark() ? p.accentDark || p.accent : p.accent)}" aria-label="${esc(p.title)}${isPackNew(p) ? ", nouveau contenu" : ""}"><span class="b-ring">${ring(p)}<span class="b-emoji" aria-hidden="true">${esc(p.emoji || "📘")}</span>${newBadge(p)}</span><span class="b-name">${esc(p.short || p.title)}</span>${sort === "recent" ? `<span class="b-soon">${lastLabel(p)}</span>` : ""}</button>`;
+    const row = p => {
+      const ns = p._real; const count = l => ns.filter(n => stampsOf(p.id, n.id)[l]).length;
+      return `<div class="card pack-row" data-act="pack" data-p="${esc(p.id)}" data-name="${esc(p.title.toLowerCase())}" role="button" tabindex="0" style="--accent:${esc(T.isDark() ? p.accentDark || p.accent : p.accent)}">
+          <div class="pr-main"><span class="emoji" aria-hidden="true">${esc(p.emoji || "📘")}</span><div class="pr-t"><h3>${esc(p.title)}${isPackNew(p) ? ` <span class="tag new">Nouveau</span>` : ""}</h3><div class="small muted">${esc(p.subtitle || "")}${sort === "recent" ? ` · ${lastLabel(p)}` : ""}</div></div></div>
           <div class="pr-more"><div class="q">${esc(p.question || "")}</div>
-          <div class="meter">${[1, 2, 3].map(l => `<span class="lv${l}">${LEVELS[l]}</span><span class="bar lv${l}"><i style="width:${Math.round(count(l) / ns.length * 100)}%"></i></span><span>${count(l)}/${ns.length}</span>`).join("")}</div>
+          <div class="meter">${[1, 2, 3].map(l => `<span class="lv${l}">${LEVELS[l]}</span><span class="bar lv${l}"><i style="width:${Math.round(count(l) / (ns.length || 1) * 100)}%"></i></span><span>${count(l)}/${ns.length}</span>`).join("")}</div>
           <div class="small muted" style="margin-top:8px">État des connaissances : ${esc(p.knowledge || "")}${p._exts.length ? `, ${p._exts.length} extension${p._exts.length > 1 ? "s" : ""}` : ""}</div></div></div>`;
-      });
-      if (soon.length) h += `<p class="small muted">Bientôt : ${soon.map(([, e, t]) => e + " " + esc(t)).join(", ")}.</p>`;
-    }
+    };
+    groups.forEach(([title, list], gi) => {
+      if (title) h += `<h3 class="theme-head">${esc(title)}</h3>`;
+      if (!detail) h += `<div class="bubbles">` + list.map(bubble).join("") + (gi === groups.length - 1 ? soon.map(([id, e, t]) => `<button class="bubble soon" data-act="soon" data-p="${id}" data-t="${esc(t)}" aria-label="${esc(t)}, bientôt"><span class="b-ring"><span class="b-emoji" aria-hidden="true">${e}</span></span><span class="b-name">${esc(T.DOMAINS[id] ? T.DOMAINS[id].short : t)}</span><span class="b-soon">bientôt</span></button>`).join("") : "") + `</div>`;
+      else h += list.map(row).join("");
+    });
+    if (detail && soon.length) h += `<p class="small muted">Bientôt : ${soon.map(([, e, t]) => e + " " + esc(t)).join(", ")}.</p>`;
     return h;
   }
 
@@ -937,15 +976,15 @@ const T = (function () {
   function itemHTML(p, n, num) {
     const lv = levelsOf(n);
     return `<button class="item" data-act="notion" data-p="${esc(p.id)}" data-n="${esc(n.id)}"><span class="stamp-slot" style="width:52px;height:52px">${stampSVG(n.glyph || "?", n.id, topLevel(p.id, n.id), stampsOf(p.id, n.id))}</span>
-      <span>${num ? `<span class="num">${num}</span>` : ""}<h3>${esc(n.title)}</h3><div class="sum">${esc(n.summary || "")}</div>${lv.length === 0 ? `<div class="small muted" style="margin-top:3px">En préparation</div>` : lv.length < 3 ? `<div class="small muted" style="margin-top:3px">Niveaux disponibles : ${lv.map(l => LEVELS[l]).join(", ")}</div>` : ""}</span>
+      <span>${num ? `<span class="num">${num}</span>` : ""}<h3>${esc(n.title)}${isNotionNew(p, n.id) ? ` <span class="tag new">Nouveau</span>` : ""}</h3><div class="sum">${esc(n.summary || "")}</div>${lv.length === 0 ? `<div class="small muted" style="margin-top:3px">En préparation</div>` : lv.length < 3 ? `<div class="small muted" style="margin-top:3px">Niveaux disponibles : ${lv.map(l => LEVELS[l]).join(", ")}</div>` : ""}</span>
       ${minis(p.id, n.id)}</button>`;
   }
   function drawerHTML(p, n) {
     if (!n._kids.length) return "";
     const key = p.id + "/" + n.id; const open = openKids.has(key);
     const done = n._kids.filter(c => topLevel(p.id, c.id) >= 1).length;
-    return `<div class="drawer${open ? " open" : ""}"><button class="drawer-toggle" data-act="kids" data-k="${esc(key)}" aria-expanded="${open}"><span class="chev" aria-hidden="true">›</span><span>${n._kids.length} ${esc((n.childrenLabel || "sous-notions").toLowerCase())}</span><span class="muted small">${done ? `${done} validé${done > 1 ? "s" : ""}` : ""}</span></button>
-      ${open ? `<div class="drawer-list">${n._kids.map(c => `<button class="row-item" data-act="notion" data-p="${esc(p.id)}" data-n="${esc(c.id)}"><span class="stamp-slot" style="width:34px;height:34px">${stampSVG(c.glyph || "?", c.id, topLevel(p.id, c.id), stampsOf(p.id, c.id))}</span><span class="ri-t">${esc(c.title)}</span>${minis(p.id, c.id)}</button>`).join("")}</div>` : ""}</div>`;
+    return `<div class="drawer${open ? " open" : ""}"><button class="drawer-toggle" data-act="kids" data-k="${esc(key)}" aria-expanded="${open}"><span class="chev" aria-hidden="true">›</span><span>${n._kids.length} ${esc((n.childrenLabel || "sous-notions").toLowerCase())}${n._kids.some(c => isNotionNew(p, c.id)) ? ` <span class="tag new">Nouveau</span>` : ""}</span><span class="muted small">${done ? `${done} validé${done > 1 ? "s" : ""}` : ""}</span></button>
+      ${open ? `<div class="drawer-list">${n._kids.map(c => `<button class="row-item" data-act="notion" data-p="${esc(p.id)}" data-n="${esc(c.id)}"><span class="stamp-slot" style="width:34px;height:34px">${stampSVG(c.glyph || "?", c.id, topLevel(p.id, c.id), stampsOf(p.id, c.id))}</span><span class="ri-t">${esc(c.title)}${isNotionNew(p, c.id) ? ` <span class="tag new">Nouveau</span>` : ""}</span>${minis(p.id, c.id)}</button>`).join("")}</div>` : ""}</div>`;
   }
   function groupProgress(p, g) { const all = realDesc(g); const done = all.filter(x => topLevel(p.id, x.id) >= 1).length; return { all: all.length, done }; }
   function pathHTML(p) {
@@ -954,7 +993,7 @@ const T = (function () {
       if (n.group) {
         const key = p.id + "/" + n.id; const open = openGroups.has(key); const pr = groupProgress(p, n);
         const body = n._kids.map(c => `<div class="node">${itemHTML(p, c, (++num) + ".")}${drawerHTML(p, c)}</div>`).join("");
-        return `<section class="group${open ? " open" : ""}"><div class="group-head"><button class="group-toggle" data-act="group" data-k="${esc(key)}" aria-expanded="${open}"><span class="g-emoji" aria-hidden="true">${esc(n.emoji || "📁")}</span><span class="g-t"><span class="g-title">${esc(n.title)}</span><span class="small muted">${pr.all} notion${pr.all > 1 ? "s" : ""}${pr.done ? `, ${pr.done} validée${pr.done > 1 ? "s" : ""}` : ""}</span><span class="g-bar" aria-hidden="true"><i style="width:${pr.all ? Math.round(pr.done / pr.all * 100) : 0}%"></i></span></span><span class="chev" aria-hidden="true">›</span></button></div>
+        return `<section class="group${open ? " open" : ""}"><div class="group-head"><button class="group-toggle" data-act="group" data-k="${esc(key)}" aria-expanded="${open}"><span class="g-emoji" aria-hidden="true">${esc(n.emoji || "📁")}</span><span class="g-t"><span class="g-title">${esc(n.title)}${realDesc(n).some(x => isNotionNew(p, x.id)) ? ` <span class="tag new">Nouveau</span>` : ""}</span><span class="small muted">${pr.all} notion${pr.all > 1 ? "s" : ""}${pr.done ? `, ${pr.done} validée${pr.done > 1 ? "s" : ""}` : ""}</span><span class="g-bar" aria-hidden="true"><i style="width:${pr.all ? Math.round(pr.done / pr.all * 100) : 0}%"></i></span></span><span class="chev" aria-hidden="true">›</span></button></div>
           ${open ? `<div class="group-body">${n.summary ? `<p class="small muted g-sum">${esc(n.summary)} <button class="pl" data-act="notion" data-p="${esc(p.id)}" data-n="${esc(n.id)}">Présentation de la catégorie</button></p>` : ""}${body}</div>` : ""}</section>`;
       }
       return `<div class="node">${itemHTML(p, n, (++num) + ".")}${drawerHTML(p, n)}</div>`;
@@ -975,7 +1014,9 @@ const T = (function () {
     const p = PK[S().nav.pack]; if (!p) return vHome();
     const tab = S().nav.tab || "path";
     const tabs = [["path", "Parcours"], ["inquiry", "Enquête"], ["timeline", "Frise"], ["people", "Figures"], ["glossary", "Glossaire"]];
+    const fresh = freshNews(p);
     let h = `<div class="pack-head"><span class="kd">État des connaissances : ${esc(p.knowledge || "")}</span><h1><span aria-hidden="true">${esc(p.emoji || "")}</span> ${esc(p.title)}</h1></div>
+      ${fresh.length ? `<div class="card news-card"><strong><span class="tag new">Nouveau</span> Depuis ta dernière visite</strong><ul>${fresh.map(x => `<li><span class="small muted">${esc(String(x.date).split("-").reverse().join("/"))}</span> ${esc(x.text)}</li>`).join("")}</ul><p class="small muted" style="margin:0">Les notions concernées portent le repère « Nouveau » jusqu’à ce que tu les ouvres.</p></div>` : ""}
       <div class="tabs" role="tablist">${tabs.map(([k, l]) => `<button class="tab" role="tab" data-act="ptab" data-k="${k}" aria-selected="${tab === k}">${l}</button>`).join("")}</div>`;
     if (tab === "path") {
       h += `<p class="lead">${esc(p.intro || "")}</p>` + pathHTML(p);
@@ -1347,6 +1388,7 @@ const T = (function () {
   /* ---------- Rendu ---------- */
   function render() {
     const s = S(); const v = s.nav.view; const p = PK[s.nav.pack];
+    if (p && ["pack", "notion", "person"].includes(v)) { ack().lastUsed[p.id] = Date.now(); if (v === "notion" && s.nav.notion) touchNotion(p, s.nav.notion); save(); }
     const titles = { home: "", pack: p ? p.title : "", notion: p ? p.title : "", person: p ? p.title : "", quiz: "Test", review: "Révisions", discover: "Découverte", settings: "Réglages", requests: "À développer", modules: "Modules", search: "Rechercher" };
     document.documentElement.style.setProperty("--accent", (p ? (T.isDark() ? p.accentDark || p.accent : p.accent) : "") || "var(--l1)");
     const cur = s.profiles.find(x => x.id === s.current);
@@ -1479,6 +1521,7 @@ const T = (function () {
         if (r.e.gloss) setTimeout(() => { const e = document.getElementById("gl-" + r.e.gloss); if (e) { e.scrollIntoView({ block: "center" }); e.style.background = "var(--soft)"; } }, 40);
         break;
       }
+      case "home-sort": s.settings.homeSort = d.k; save(); render(); break;
       case "home-detail": s.settings.homeDetail = !s.settings.homeDetail; save(); render(); break;
       case "soon": { const on = toggleReq({ pack: d.p, kind: "sujet", ref: d.p, label: d.t }); toast(on ? `${d.t} : demande ajoutée à « À développer ».` : "Demande retirée."); render(); break; }
       case "add-profile": { const id = "p" + uid(); s.profiles.push({ id, name: "Profil " + (s.profiles.length + 1) }); s.data[id] = freshProfile(); save(); render(); break; }

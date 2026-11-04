@@ -147,3 +147,14 @@ Une demande rattachée à aucun domaine installé (domaine `_libre` ou nouveau d
 L’export de l’écran « À développer » produit un fichier de type `demandes`, qui liste les modules installés (avec les identifiants des notions et des figures) et les demandes : domaine, type, référence, libellé et précision. Il contient aussi, dans `notes`, les notes que l’utilisateur a écrites sur les fiches (sauf si l’option est désactivée) : domaine, notion, niveau lu (`levelRead`) et texte. Ce sont souvent des questions (« que se passe-t-il si je tombe dans une planète gazeuse ? ») : y répondre en complétant le niveau concerné, dans le ton de ce niveau.
 
 La réponse attendue est une extension (ou un domaine complet pour un nouveau sujet) qui respecte les identifiants existants.
+
+
+## Thème d’accueil et journal des nouveautés
+
+Un domaine peut porter un champ `theme` (« Sciences », « Histoire et géographie », « Sciences humaines », « Philosophie », « Numérique ») utilisé par le tri « Par thème » de l’accueil.
+
+Un domaine ou une extension peut porter un champ `news` : une liste d’entrées `{ "id": "identifiant-unique", "date": "AAAA-MM-JJ", "text": "Ce qui a changé", "notions": ["id1", "id2"] }`. Tant qu’une entrée n’a pas été vue, le sujet affiche « Nouveau » sur l’accueil, une carte « Depuis ta dernière visite » apparaît à l’ouverture du sujet, et chaque notion citée garde le repère jusqu’à ce qu’elle soit ouverte. L’identifiant doit être unique et ne jamais être réutilisé.
+
+## Mise à jour groupée
+
+Le fichier `tartiflette-mise-a-jour.json` est de type `bundle` et contient tous les modules. Chaque module porte une date de construction `_built` : l’appli garde toujours la version la plus récente, qu’elle vienne du site ou d’un import.
