@@ -251,6 +251,10 @@ input[type="text"], input[type="search"] { width: 100%; border: 1.5px solid var(
 .sheet { position: fixed; inset: 0; z-index: 45; background: rgba(8, 10, 14, .5); display: flex; align-items: flex-end; justify-content: center; }
 .sheet-in { background: var(--surface); width: 100%; max-width: 760px; max-height: 85vh; overflow-y: auto; border-radius: 18px 18px 0 0; padding: 20px 20px calc(env(safe-area-inset-bottom, 0px) + 20px); }
 .sheet-in h3 { margin-top: 0; }
+figure.pic { margin: 1.4em 0; text-align: center; }
+figure.pic img { max-width: 100%; max-height: 420px; width: auto; height: auto; display: block; margin: 0 auto; border-radius: 12px; border: 1px solid var(--line); box-shadow: 0 2px 14px rgba(0, 0, 0, .14); cursor: zoom-in; }
+figure.pic figcaption { font-family: var(--f-ui); font-size: .85rem; color: var(--muted); margin-top: 7px; line-height: 1.4; }
+.sheet .zoom-img { max-width: 100%; max-height: 72vh; border-radius: 12px; display: block; margin: 0 auto 12px; }
 .toast { position: fixed; left: 50%; bottom: calc(84px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--paper); padding: 10px 16px; border-radius: 999px; font-size: .9rem; z-index: 60; max-width: 90vw; text-align: center; }
 .empty { text-align: center; padding: 30px 12px; color: var(--muted); }
 .profile-row { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); }
@@ -784,6 +788,11 @@ const T = (function () {
       b = b.trim();
       if (b.startsWith("::figure ")) return figure(b.slice(9).trim());
       if (b.startsWith("::image ")) return illus(b.slice(8).trim(), pid);
+      if (/^!\[/.test(b)) return b.split(/\n/).map(l => {
+        const im = l.match(/^!\[([^\]]*)\]\((https?:\/\/[^)\s]+)\)\s*$/);
+        if (im) return `<figure class="pic" data-act="zoom" data-src="${esc(im[2])}" role="button" tabindex="0" aria-label="${im[1] ? esc(im[1]) : "Illustration"}"><img src="${esc(im[2])}" alt="${esc(im[1] || "")}" loading="lazy" decoding="async">${im[1] ? `<figcaption>${inline(im[1], pid)}</figcaption>` : ""}</figure>`;
+        return `<p>${autoLink(inline(l, pid), pid, linked).replace(/\n/g, "<br>")}</p>`;
+      }).join("");
       if (b.startsWith("## ")) return `<h3>${inline(b.slice(3), pid)}</h3>`;
       if (b.startsWith("> ")) return `<div class="callout">${autoLink(inline(b.replace(/^> ?/gm, ""), pid), pid, linked)}</div>`;
       if (/^- /.test(b)) return `<ul>${b.split(/\n/).map(l => `<li>${autoLink(inline(l.replace(/^- /, ""), pid), pid, linked)}</li>`).join("")}</ul>`;
@@ -791,7 +800,7 @@ const T = (function () {
     }).join("");
   }
 
-  const APP_VERSION = "11";
+  const APP_VERSION = "12";
   /* ---------- Illustrations fournies par les modules ---------- */
   // Un module peut fournir des dessins vectoriels (champ « images ») qu’une fiche affiche avec « ::image identifiant ».
   // Le dessin est nettoyé : aucun script, aucun attribut d’événement, aucun lien externe ne passe.
@@ -1061,7 +1070,7 @@ const T = (function () {
       ${fresh.length ? `<div class="card news-card"><strong><span class="tag new">Nouveau</span> Depuis ta dernière visite</strong><ul>${fresh.map(x => `<li><span class="small muted">${esc(String(x.date).split("-").reverse().join("/"))}</span> ${esc(x.text)}</li>`).join("")}</ul><p class="small muted" style="margin:0">Les notions concernées portent le repère « Nouveau » jusqu’à ce que tu les ouvres.</p></div>` : ""}
       <div class="tabs" role="tablist">${tabs.map(([k, l]) => `<button class="tab" role="tab" data-act="ptab" data-k="${k}" aria-selected="${tab === k}">${l}</button>`).join("")}</div>`;
     if (tab === "path") {
-      h += `<p class="lead">${esc(p.intro || "")}</p>` + pathHTML(p);
+      h += `<div class="lead reading">${md(p.intro || "", p.id)}</div>` + pathHTML(p);
       if (p.resources && p.resources.length) h += `<h2>Pour tout le sujet</h2>` + resList(p.resources);
       h += `<div class="row" style="margin-top:18px">${flagBtn({ pack: p.id, kind: "nouvelle", ref: "sujet", label: "Nouvelles notions pour " + p.title }, "Proposer d’autres notions")}</div>`;
     }
@@ -1495,6 +1504,13 @@ const T = (function () {
       }
       case "gloss-all": document.querySelectorAll(".sheet").forEach(x => x.remove()); go({ view: "pack", pack: d.p, tab: "glossary" }); setTimeout(() => { const e = document.getElementById("gl-" + d.g); if (e) { e.scrollIntoView({ block: "center" }); e.style.background = "var(--soft)"; } }, 40); break;
       case "close": document.querySelectorAll(".sheet").forEach(x => x.remove()); break;
+      case "zoom": {
+        const o = document.createElement("div"); o.className = "sheet";
+        o.innerHTML = `<div class="sheet-in" role="dialog" aria-modal="true" aria-label="Illustration agrandie"><img class="zoom-img" src="${esc(d.src)}" alt="" loading="lazy"><div class="row wrap"><button class="btn" data-act="close">Fermer</button><button class="btn small" data-act="open-src" data-src="${esc(d.src)}">Ouvrir l’original</button></div></div>`;
+        o.addEventListener("click", e => { if (e.target === o) o.remove(); });
+        document.body.appendChild(o); $(".btn", o).focus(); break;
+      }
+      case "open-src": window.open(d.src, "_blank", "noopener"); break;
       case "flag": {
         const r = JSON.parse(d.r); const on = toggleReq(r);
         el.setAttribute("aria-pressed", on); el.textContent = on ? "✓ Marqué à développer" : "✎ " + (d.l || "À développer");
@@ -1578,6 +1594,7 @@ const T = (function () {
   document.addEventListener("keydown", e => {
     if (e.key === "Escape") document.querySelectorAll(".sheet").forEach(x => x.remove());
     if ((e.key === "Enter" || e.key === " ") && e.target.classList && e.target.classList.contains("pack-row")) { e.preventDefault(); go({ view: "pack", pack: e.target.dataset.p, tab: "path" }); }
+    if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches("figure[data-act='zoom']")) { e.preventDefault(); e.target.click(); }
   });
   document.addEventListener("input", ev => {
     const el = ev.target; const s = S();
