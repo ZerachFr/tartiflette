@@ -439,6 +439,23 @@ div.path { margin: 0; padding: 0; }
 .news-card ul { margin: 8px 0; padding-left: 18px; }
 .news-card li { margin-bottom: 4px; }
 
+/* Illustrations des modules : les classes reprennent les couleurs du thème */
+.illus { margin: 1.2em 0; }
+.illus svg { max-width: 520px; margin: 0 auto; }
+.illus figcaption { margin-top: 8px; }
+.illus .s { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.illus .t { fill: none; stroke: var(--ink); stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; opacity: .75; }
+.illus .f { fill: var(--soft); stroke: var(--ink); stroke-width: 2.2; stroke-linejoin: round; }
+.illus .w { fill: var(--surface); stroke: var(--ink); stroke-width: 2.2; stroke-linejoin: round; }
+.illus .a { fill: var(--accent); stroke: var(--ink); stroke-width: 2; stroke-linejoin: round; }
+.illus .as { fill: none; stroke: var(--accent); stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+.illus .ink { fill: var(--ink); }
+.illus .ld { fill: none; stroke: var(--muted); stroke-width: 1.2; stroke-dasharray: 3 3; }
+.illus .dot { fill: var(--muted); }
+.illus text { fill: var(--ink); font-family: var(--f-ui); font-size: 13px; }
+.illus text.m { fill: var(--muted); font-size: 12px; }
+.illus .bar { fill: none; stroke: var(--ink); stroke-width: 7; stroke-linecap: round; }
+
 </style>
 </head>
 <body>
@@ -766,11 +783,36 @@ const T = (function () {
     return String(text || "").trim().split(/\n\s*\n/).map(b => {
       b = b.trim();
       if (b.startsWith("::figure ")) return figure(b.slice(9).trim());
+      if (b.startsWith("::image ")) return illus(b.slice(8).trim(), pid);
       if (b.startsWith("## ")) return `<h3>${inline(b.slice(3), pid)}</h3>`;
       if (b.startsWith("> ")) return `<div class="callout">${autoLink(inline(b.replace(/^> ?/gm, ""), pid), pid, linked)}</div>`;
       if (/^- /.test(b)) return `<ul>${b.split(/\n/).map(l => `<li>${autoLink(inline(l.replace(/^- /, ""), pid), pid, linked)}</li>`).join("")}</ul>`;
       return `<p>${autoLink(inline(b, pid), pid, linked).replace(/\n/g, "<br>")}</p>`;
     }).join("");
+  }
+
+  const APP_VERSION = "11";
+  /* ---------- Illustrations fournies par les modules ---------- */
+  // Un module peut fournir des dessins vectoriels (champ « images ») qu’une fiche affiche avec « ::image identifiant ».
+  // Le dessin est nettoyé : aucun script, aucun attribut d’événement, aucun lien externe ne passe.
+  function cleanSvg(svg) {
+    const t = String(svg || "").trim();
+    if (!/^<svg[\s>]/i.test(t) || !/<\/svg>$/i.test(t)) return "";
+    return t.replace(/<(script|foreignObject|iframe|object|embed|image|use|a)\b[\s\S]*?(<\/\1>|\/>)/gi, "")
+      .replace(/\son[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "")
+      .replace(/\s(href|xlink:href)\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "")
+      .replace(/javascript:/gi, "");
+  }
+  function illus(id, pid) {
+    const im = PK[pid] && PK[pid].images && PK[pid].images[id];
+    if (!im) return `<div class="figure illus small muted">Illustration indisponible. Mets à jour le module depuis Réglages, puis « Modules et mises à jour ».</div>`;
+    let svg = cleanSvg(im.svg);
+    if (!svg) return "";
+    // Safari a besoin d’une largeur, d’une hauteur et d’un rapport explicites pour garder les proportions.
+    const vb = (svg.match(/viewBox="\s*[\d.-]+\s+[\d.-]+\s+([\d.]+)\s+([\d.]+)\s*"/) || []);
+    const w = Number(vb[1]) || 360, hh = Number(vb[2]) || 220;
+    svg = svg.replace(/^<svg/i, `<svg role="img" aria-label="${esc(im.t || "")}" width="${w}" height="${hh}" preserveAspectRatio="xMidYMid meet" style="aspect-ratio:${w} / ${hh};width:100%;height:auto"`);
+    return `<figure class="figure illus">${im.t ? `<div class="ft">${esc(im.t)}</div>` : ""}${svg}${im.c ? `<figcaption class="small muted">${inline(im.c, pid)}</figcaption>` : ""}</figure>`;
   }
 
   /* ---------- Figures interactives ---------- */
@@ -852,7 +894,7 @@ const T = (function () {
     });
   }
 
-  return { KEY, LEVELS, INTERVALS, DOMAINS, KINDS, THEMES, get S() { return S; }, set S(v) { S = v; }, get memoryOnly() { return memoryOnly; }, P, save, uid, freshProfile, defaults,
+  return { APP_VERSION, KEY, LEVELS, INTERVALS, DOMAINS, KINDS, THEMES, get S() { return S; }, set S(v) { S = v; }, get memoryOnly() { return memoryOnly; }, P, save, uid, freshProfile, defaults,
     $, esc, today, addDays, shuffle, clone, toast, seasonTheme, resolvedTheme, isDark, applyPrefs,
     RAW, get PACKS() { return PACKS; }, PK, loadModules, importModule, importBundle, removeModule, isExt, isThemes, validModule, allThemes, moduleThemes, findTheme,
     levelsOf, nkey, stampsOf, topLevel, dueItems, reqKey, hasReq, toggleReq, flagBtn, stampSVG, minis, domainInfo, md, rich, inline, drawFigures, resetFig };
@@ -862,7 +904,7 @@ const T = (function () {
 <script>
 (function () {
   "use strict";
-  const { LEVELS, INTERVALS, KINDS, THEMES, P, save, uid, freshProfile, $, esc, today, addDays, shuffle, toast, PK,
+  const { APP_VERSION, LEVELS, INTERVALS, KINDS, THEMES, P, save, uid, freshProfile, $, esc, today, addDays, shuffle, toast, PK,
     levelsOf, nkey, stampsOf, topLevel, dueItems, toggleReq, flagBtn, stampSVG, minis, domainInfo, md, rich, drawFigures, resetFig } = T;
   const S = () => T.S;
   const UPCOMING = [["ia", "🤖", "L’intelligence artificielle"], ["philosophie", "🦉", "La philosophie"]];
@@ -1138,7 +1180,7 @@ const T = (function () {
 
   /* ---------- Recherche ---------- */
   const norm = t => String(t || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  const plain = t => String(t || "").replace(/\[\[[^\]|]+\|([^\]]+)\]\]/g, "$1").replace(/\[\[@?([^\]]+)\]\]/g, "$1").replace(/\{\{[^}|]+\|([^}]+)\}\}/g, "$1").replace(/\{\{([^}]+)\}\}/g, "$1").replace(/::figure \w+/g, "").replace(/^##? |^> /gm, "").replace(/\*\*/g, "");
+  const plain = t => String(t || "").replace(/\[\[[^\]|]+\|([^\]]+)\]\]/g, "$1").replace(/\[\[@?([^\]]+)\]\]/g, "$1").replace(/\{\{[^}|]+\|([^}]+)\}\}/g, "$1").replace(/\{\{([^}]+)\}\}/g, "$1").replace(/::figure \w+/g, "").replace(/::image [\w-]+/g, "").replace(/^##? |^> /gm, "").replace(/\*\*/g, "");
   let INDEX = null;
   function buildIndex() {
     INDEX = [];
@@ -1337,6 +1379,7 @@ const T = (function () {
   function vModules() {
     const cd = S().settings.contentDate;
     let h = `<h1>Modules</h1>
+      <p class="small muted">Version de l’appli : ${esc(APP_VERSION)}${APP_VERSION >= "11" ? " (avec illustrations)" : ""}</p>
       <div class="card update-card"><h2 style="margin-top:0">Mettre à jour le contenu</h2><p class="small">Quand je t’envoie un fichier <strong>tartiflette-mise-a-jour</strong>, enregistre-le sur ton téléphone, puis choisis-le ici. Tous les sujets sont mis à jour d’un coup, sans passer par GitHub, et ta progression est conservée.${cd ? ` Dernière mise à jour installée : ${esc(String(cd).slice(0, 10).split("-").reverse().join("/"))}.` : ""}</p><label class="btn primary">Choisir le fichier de mise à jour<input type="file" accept=".json,application/json" id="mod-file" hidden></label></div>
       <p class="lead">Un domaine (l’Espace, la Philosophie…) est un module de base. Une extension ajoute ou complète des contenus d’un domaine existant : nouvelles notions, niveaux, figures, jalons, questions. Un module de thèmes ajoute des palettes de couleurs. Installer ou mettre à jour un module ne touche jamais à ta progression.</p>`;
     T.PACKS.forEach(p => {
