@@ -1,0 +1,51 @@
+{
+  "type": "extension",
+  "id": "philosophie-portraits-1",
+  "target": "philosophie",
+  "version": 1,
+  "order": 1,
+  "title": "Portraits : Socrate",
+  "description": "Une leçon complète sur le philosophe d’Athènes : la méthode, le procès de 399, la ciguë et l’héritage.",
+  "_built": "2026-11-05T18:12:23.349Z",
+  "people": [
+    {
+      "id": "socrate",
+      "lesson": "## Le philosophe qui n’a rien écrit\n\nVers 470 avant notre ère, à Athènes, naît Socrate, fils d’un sculpteur et d’une sage-femme. Il n’écrira jamais rien : tout ce que nous savons de lui vient des autres — surtout de [[@platon|Platon]], son disciple, qui met en scène un interlocuteur irrésistible ; de Xénophone, autre disciple, plus terne ; et d’Aristophane, qui, dans sa comédie les Nuées, en fait pour rire un sophiste suspendu dans les airs. Démêler le Socrate historique du personnage de Platon occupe les savants depuis deux siècles : c’est le « problème socratique ».\n\n## La méthode : interroger, puis accoucher\n\nSa manière est une scène de rue. Il arrête un passant réputé savant — un général sur le courage, un devin sur la piété — et lui demande : « qu’est-ce donc ? ». L’homme répond ; Socrate, avec l’air de ne rien faire, fait tomber les définitions une à une, jusqu’à ce que l’autre convienne qu’il ne sait pas. Premier temps : l’ironie. Second temps : la {{maieutique|maïeutique}}, l’art d’accoucher — comme sa mère accouchait les corps, lui accouche les esprits ; c’est à plusieurs qu’on remonte vers une meilleure réponse.\n\n« Je ne crois pas savoir ce que je ne sais pas » : c’est ainsi, à peu près, qu’il résume sa sagesse — et l’oracle de Delphes l’avait pourtant déclaré le plus sage des hommes. Précisément, explique-t-il : il ne croit pas savoir ce qu’il ne sait pas, et c’est toute la différence. La formule « je sais que je ne sais rien », inventée après lui, dit la même chose en moins bien.\n\n## Un taon sur le dos d’un cheval\n\nIl se décrit lui-même, dans son plaidoyer, comme un taon : il pique le grand cheval d’Athènes pour l’empêcher de s’endormir. Pas de salle, pas de cours magistral, pas d’honoraires — il refuse l’argent, à la différence des sophistes, ces professeurs ambulants qui font payer leurs leçons et promettent le succès. Il vit pauvre, pieds nus, d’un unique manteau ; il a pourtant combattu bravement à Potidée et à Délium, sauvé la vie d’Alcibiade, et résisté seul, sous la tyrannie des Trente, à un ordre illégal. Une {{daimon|voix intérieure}}, dit-il, l’accompagne depuis l’enfance : elle ne commande jamais ; elle le retient quand il va mal faire.\n\n## 399 : le procès\n\nLa guerre est perdue, la démocratie restaurée cherche des responsables. Trois accusateurs portent plainte : Socrate corrompt la jeunesse et ne reconnaît pas les dieux de la cité. Cinq cent un juges. Platon a raconté le plaidoyer : loin de plaider à voix basse, Socrate retrace sa vie, propose — ironie suprême — qu’on le nourrisse au Prytanée comme un vainqueur, et perd de peu — une trentaine de voix de plus l’aurait acquitté.\n\nCondamné, il refuse de s’évader quand ses amis ont tout préparé : fuir, ce serait rendre le coup aux lois qui l’ont fait. Il boit la ciguë, entouré de ses amis, après avoir rappelé qu’un coq est dû à Asclépios, le dieu qui guérit — la vie, sans doute, était la maladie.\n\n## Ce qu’il a ouvert\n\nAprès sa mort, la philosophie explose. Platon fonde l’Académie ; autour de sa mémoire, des écoles rivales se réclament de lui : les mégariques raffinent la logique, les cyniques veulent vivre selon la nature, les cyrénaïques goûtent le présent. Tous descendent de cet homme qui a fait de la question « comment vivre ? » le cœur de la philosophie, et qui a montré, bien avant Montaigne ou Kierkegaard, qu’une vie peut être une œuvre.\n\nPour tirer le fil : [[philosopher|Qu’est-ce que philosopher ?]] et [[argumenter|l’art d’argumenter]] — deux fiches où sa voix court encore ; la {{maieutique|maïeutique}} est au glossaire, comme le {{daimon|daimôn}} qui l’accompagnait.",
+      "resources": [
+        {
+          "type": "article",
+          "title": "Socrates",
+          "author": "Stanford Encyclopedia of Philosophy",
+          "lang": "en",
+          "url": "https://plato.stanford.edu/entries/socrates/",
+          "level": 3,
+          "note": "En anglais, très complet : le problème socratique, la méthode, le procès."
+        },
+        {
+          "type": "article",
+          "title": "Socrate",
+          "author": "Encyclopédie Larousse",
+          "lang": "fr",
+          "url": "https://www.larousse.fr/encyclopedie/personnage/Socrate/144665",
+          "level": 1,
+          "note": "La notice française : le siècle de Périclès et la parole philosophique."
+        }
+      ]
+    }
+  ],
+  "glossary": [
+    {
+      "id": "daimon",
+      "t": "Daimôn",
+      "d": "La « voix » intérieure de Socrate : un signe divin qui, dit-il, l’accompagne depuis l’enfance. Jamais elle ne l’encourage à agir ; elle le retient quand il va mal faire. Présenté au procès, ce signe fait partie des griefs d’impiété."
+    }
+  ],
+  "news": [
+    {
+      "id": "ph-portraits-2026-11-06",
+      "date": "2026-11-06",
+      "text": "Leçon complète de Socrate : la maïeutique, le procès de 399, la ciguë et l’héritage.",
+      "notions": []
+    }
+  ]
+}

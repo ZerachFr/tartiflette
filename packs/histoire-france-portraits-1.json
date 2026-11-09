@@ -1,0 +1,75 @@
+{
+  "type": "extension",
+  "id": "histoire-france-portraits-1",
+  "target": "histoire-france",
+  "version": 1,
+  "order": 1,
+  "title": "Portraits : Clovis et Charlemagne",
+  "description": "Deux leçons complètes sur les rois francs : le baptême de Reims, l’empire de l’an 800, et ce qu’il en reste aujourd’hui.",
+  "_built": "2026-11-05T18:12:23.349Z",
+  "people": [
+    {
+      "id": "clovis",
+      "lesson": "## Un roi de la frontière\n\nClovis naît vers 466, sans doute à Tournai, dans l’actuelle Belgique. Son père, Childéric, y règne sur les Francs saliens, un peuple installé aux marges de la Gaule romaine — l’un des moins puissants des royaumes qui se partagent alors l’Occident. En 481, Clovis a une quinzaine d’années quand il hérite de ce petit royaume : quelques terres entre la mer du Nord et la Somme.\n\nLa famille porte un nom qui deviendra une étiquette historique : les Mérovingiens, descendants de Mérovée, un ancêtre à demi légendaire. Leur signe distinctif tient à une chevelure : les rois mérovingiens ne se coupent jamais les cheveux. La longue mèche, dit-on, porte la chance de la famille. Le dernier d’entre eux sera tonsuré en 751, avec l’assentiment du pape : pour un Mérovingien, perdre ses cheveux, c’est perdre le droit de régner.\n\n## Battre le « roi romain », puis tout le monde\n\nEn 486, Clovis attaque Syagrius, que l’on surnomme le « roi des Romains », retranché à Soissons. Victoire. C’est de cette guerre que vient l’anecdote la plus célèbre : après le sac de la ville, Clovis réclame, au-delà de son partage, un vase précieux ; un soldat le brise d’un coup de hache en lui disant qu’il n’aura que ce qui lui revient. Clovis n’en dit rien. À la revue suivante, il reconnaît le soldat, fend son crâne et conclut : « Ainsi as-tu traité mon vase. » Grégoire de Tours, qui raconte tout cela un siècle plus tard, aime les scènes qui montrent un roi à la fois patient et terrible.\n\nLe royaume s’étend ensuite presque à chaque campagne : les Thuringiens vers l’est, les Burgondes, dont il épouse la nièce Clotilde, enfin les Wisigoths, vaincus à Vouillé en 507 — leur roi Alaric II est tué, les survivants abandonnent l’Aquitagne et se replient en Espagne. Paris, ville close et centrale, devient sa capitale.\n\n## Le baptême de Reims\n\nLe geste qui fonde la suite, c’est le baptême. Clovis est païen ; Clotilde, catholique, le pousse depuis des années. Vers la fin du siècle — la date exacte fait débat, on hésite entre 496 et 508 —, il se fait baptiser à Reims par l’évêque Remi, dans une piscine dont on peut encore voir les restes sous la cathédrale.\n\nPourquoi est-ce un coup de génie ? Parce que les autres rois barbares sont, pour la plupart, {{arianisme|ariens}} : une variante du christianisme que Rome tient pour hérétique. Les évêques gallo-romains, tout-puissants dans les villes, se méfient d’eux. Clovis, lui, entre dans l’Église catholique : il gagne d’un coup le clergé, les élites romaines, et une famille spirituelle — la Gaule chrétienne devient son royaume. « Fléchis la tête, Sicambre », lui dit-on ensuite ; adore ce que tu as brûlé, brûle ce que tu as adoré.\n\n## Ce qu’il laisse\n\nClovis meurt à Paris en 511. Le royaume qu’il transmet est le plus vaste de Gaule, mais la coutume franque le traite comme un patrimoine : il est partagé entre ses quatre fils, comme on partage une ferme. Les Mérovingiens règnent encore deux siècles — jusqu’en 751 —, mais de plus en plus en titre : après Dagobert, les « rois fainéants » laissent les {{maire-du-palais|maires du palais}} gouverner, et la mèche sacrée ne suffit plus.\n\nLa postérité a retenu l’acte plus que l’homme. Le baptême de Reims fait de la France, en un sens, la fille aînée de l’Église, et presque tous les rois qui suivent se font sacrer à Reims — jusqu’à Charles X, en 1825. C’est dans [[francs|Clovis et Charlemagne]] que cette histoire s’insère, de la [[gaule|Gaule romaine]] à l’empire ; et c’est [[@charlemagne|Charlemagne]], trois siècles plus tard, qui reprend le flambeau franc.",
+      "resources": [
+        {
+          "type": "article",
+          "title": "Clovis",
+          "author": "Encyclopédie Larousse",
+          "lang": "fr",
+          "url": "https://www.larousse.fr/encyclopedie/personnage/Clovis/187404",
+          "level": 1,
+          "note": "La notice de référence, du baptême de Reims à la bataille de Vouillé."
+        },
+        {
+          "type": "article",
+          "title": "Clovis I",
+          "author": "Encyclopædia Britannica",
+          "lang": "en",
+          "url": "https://www.britannica.com/biography/Clovis-I",
+          "level": 2,
+          "note": "En anglais : le règne de 481 à 511 dans son contexte romain."
+        }
+      ]
+    },
+    {
+      "id": "charlemagne",
+      "lesson": "## Un roi à vingt ans\n\nEn 768, Pépin le Bref meurt. Ses deux fils se partagent le royaume ; trois ans plus tard, l’aîné meurt à son tour, et Charles, dit « le Grand », règne seul sur ce qui reste du royaume franc. Il est dans la vingtaine. La famille est neuve : les Carolingiens, fils de Charles Martel, ont renversé en 751 les Mérovingiens — la dynastie de [[@clovis|Clovis]], réduite depuis longtemps à une longue chevelure sans pouvoir.\n\nCharles règne depuis le nord, le long du Rhin ; il bâtira sa capitale à Aix-la-Chapelle, autour d’une source chaude romaine, avec un palais, une chapelle et une école. Il parle plusieurs langues, dicte en latin, goûte les vieux poèmes barbares — et se plaint, dit-on, d’avoir appris à écrire trop tard.\n\n## Trente-trois ans de guerre en Saxe\n\nLe chantier de sa vie, c’est la Saxe : de l’autre côté du Rhin, un peuple païen qui refuse la domination franque. Dix-huit expéditions en trois décennies, des déportations, un massacre d’otages à Verden en 782, un impôt de dîme : là où Clovis s’était converti en une matinée, la Saxe est convertie par la terreur, et la discrétion sur ce prix-là ne date pas d’hier. Elle finit franque et chrétienne en 804.\n\nLe reste va plus vite. Les Lombards d’Italie, qui ont trop pressé le pape, sont renversés en 774 : à l’appel du pape, Charles prend leur capitale, leur couronne de fer, et garde le titre de roi des Lombards. En Espagne, une marche franque est installée en 778, au prix d’un désastre — l’arrière-garde massacrée dans le col de Roncevaux. Son chef, le comte Roland, deviendra par les chansons de geste le héros de tout le Moyen Âge : les faits sont maigres, la légende énorme.\n\n## Noël de l’an 800\n\nÀ Rome, le pape Léon III est en difficulté et a besoin du roi franc. Le 25 décembre 800, pendant la messe à Saint-Pierre, Léon dépose une couronne sur la tête de Charles ; l’assemblée acclame l’empereur couronné par Dieu. Son biographe Éginhard écrit que Charles, ce jour-là, aurait préféré ne pas entrer dans l’église s’il avait connu le dessein du pape : le geste fait du pape celui qui fait les empereurs. Beaucoup d’historiens pensent au contraire que tout avait été soigneusement préparé. Byzance, l’autre empire, mettra douze ans à digérer l’affaire.\n\n## Gouverner par l’écrit\n\nComment tient-on un empire de l’Ebre à l’Elbe, sans administration moderne ? Par la guerre, d’abord : Charles passe sa vie à cheval. Puis par l’écrit. Les comtes dirigent chaque cité au nom du roi ; pour les contrôler, des envoyés par deux — un laïc, un évêque —, les {{missi|missi dominici}}, parcourent le royaume, inspectent, écoutent les plaintes et rendent compte. Les décisions sont couchées dans des capitulaires, envoyés partout et lus à voix haute : on en a conservé des dizaines, sur la justice, les monnaies, les écoles, jusqu’à l’agriculture du domaine. C’est la première fois qu’un roi d’Occident tente de gouverner par la norme écrite à cette échelle.\n\n## La renaissance carolingienne\n\nUn lettré d’York, Alcuin, dirige l’école du palais. On y copie les classiques latins dans une nouvelle écriture, la minuscule caroline, ronde et lisible. La conséquence est considérable : l’essentiel de la littérature latine qui nous est parvenue — César, Cicéron, Virgile — a traversé les siècles grâce à des copies faites alors, dans les ateliers des monastères. Sans les copistes carolingiens, la bibliothèque de l’Antiquité aurait disparu bien des fois. Les écoles de cathédrale, la correction des textes religieux et une monnaie d’argent stable complètent ce qu’on appelle, depuis le XIXe siècle, la renaissance carolingienne.\n\n## 814, et l’empire se défait\n\nCharles meurt à Aix en janvier 814. Son fils Louis maintient l’ensemble ; les petits-fils, non : par le traité de Verdun (843), ils se partagent l’empire en trois, et la partie occidentale, la Francie occidentale, devient l’ancêtre de la France. La suite est dans [[francs|Clovis et Charlemagne]] et, pour la suite du royaume, dans [[capetiens|les Capétiens et les cathédrales]]. Le souvenir de Charles, lui, a nourri mille légendes : l’« empereur à la barbe fleurie » des chansons de geste, attendu par les croisés ; et, en 1804, un général corse qui a lu l’histoire, et qui se couronne lui-même — en évitant soigneusement le geste du pape.",
+      "resources": [
+        {
+          "type": "article",
+          "title": "Charlemagne",
+          "author": "Encyclopædia Britannica",
+          "lang": "en",
+          "url": "https://www.britannica.com/biography/Charlemagne",
+          "level": 2,
+          "note": "En anglais : la biographie de référence, du partage de 768 au couronnement de 800."
+        },
+        {
+          "type": "article",
+          "title": "Charlemagne",
+          "author": "Encyclopédie Larousse",
+          "lang": "fr",
+          "url": "https://www.larousse.fr/encyclopedie/personnage/Charlemagne/112805",
+          "level": 1,
+          "note": "Charles Ier le Grand : la notice française, d’Aix-la-Chapelle à Verdun."
+        }
+      ]
+    }
+  ],
+  "glossary": [
+    {
+      "id": "missi",
+      "t": "Missi dominici",
+      "d": "Les « envoyés du maître », missionnés par Charlemagne par deux — un laïc et un évêque — pour inspecter les comtés de l’empire : vérifier les comptes, entendre les plaintes, rendre la justice au nom de l’empereur et rapporter ce qui se passe. Les yeux et les oreilles du palais, là où le roi ne peut pas être."
+    }
+  ],
+  "news": [
+    {
+      "id": "hf-portraits-2026-11-06",
+      "date": "2026-11-06",
+      "text": "Leçons complètes de deux figures : Clovis (le baptême de Reims, la conquête) et Charlemagne (l’an 800, les missi, la renaissance carolingienne).",
+      "notions": []
+    }
+  ]
+}
